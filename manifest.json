@@ -1,0 +1,28 @@
+{
+    "manifest_version": 2, 
+    "name": "Standin",
+    "version": "0.1.0",
+    "description": "Open pages from sites like Youtube or Twitter with alternative frontends like Piped or Nitter.",
+    "icons": {
+        "128": "s128.png",
+        "48": "s48.png",
+        "16": "s16.png"
+    },
+    "browser_action": {
+        "default_icon": "s16.png",
+        "default_popup": "popup.html"
+    },
+    "background": {
+        "scripts": [
+            "context.js",
+            "popup.js"
+        ],
+        "persistent": false
+    },
+    "permissions": [
+        "notifications",
+        "contextMenus",
+        "tabs",
+        "storage"
+    ]
+}
