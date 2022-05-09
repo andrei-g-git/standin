@@ -5,116 +5,82 @@ function init(){
 
     const youtubeDropdown = document.getElementById("youtube-dropdown");    
 
-    if(youtubeDropdown !== null){
+    if(youtubeDropdown !== null && youtubeDropdown !== undefined){
 
-        const defaultDomainName = youtubeDropdown.options[0].value;
-        const domainsWithoutDefault = uniqueDomains.filter(item => item !== defaultDomainName);
-        if(domainsWithoutDefault.length){
-            for(var i = 0; i < domainsWithoutDefault.length; i++){
-                const option = document.createElement("option");
-                option.setAttribute("class", "dropdown-option");
-                option.setAttribute("value", domainsWithoutDefault[i]);
-                option.innerHTML = domainsWithoutDefault[i].charAt(0).toUpperCase() + domainsWithoutDefault[i].slice(1);
+        populateDropdown(youtubeDropdown, uniqueVideoDomains, "youtube-dropdown");
 
-                youtubeDropdown.appendChild(option);
-            }            
-        } else { 
-            console.log("unique domain list empty"); 
-        }
+        setDefaultStandinDomain(videoDomainNames, youtubeDropdown, "videoHost", "youtube"); 
 
+        updateStorageOnChange(youtubeDropdown, "videoHost", videoDomainNames);
 
-        setDefaultVideoDomain(domainNames, youtubeDropdown);
-
-        youtubeDropdown.addEventListener("change", function(event){
-
-            chrome.storage.local.get("videoHost", function(data){
-
-                const abc = data.videoHost; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
-
-                console.log("stored video domain is:     " + data.videoHost);
-                console.log("event target value:   " + event.target.value )
-                console.log("value:     " + domainNames[event.target.value])
-
-                chrome.storage.local.set({ "videoHost": domainNames[event.target.value]})
-            });
-
-            
-        });    
     } else {
         console.log("videos dropdown hasn't loaded into the document");
     }
 
+    const switchVideoButton = document.getElementById("video-standin-button");
 
-    const switchSiteButton = document.getElementById("switch-site-button");
-    if(switchSiteButton !== null){
-        switchSiteButton.addEventListener("click", function(event){
-            console.log("clicked");
+    openStandinOnClick(switchVideoButton, "videoHost", uniqueVideoDomains);
 
-            chrome.storage.local.get("videoHost", function(data){
-                if(uniqueDomains.includes(data.videoHost)){
+    ////////////////////////////////////////////////////
 
-                    chrome.tabs.query({active: true}, (allTabs) => {
-                        const url = allTabs[0].url;
+    const socialDropdown = document.getElementById("twitter-dropdown");
 
-                        let hostName = checkForValidUrl(url);
+    if(socialDropdown !== null && socialDropdown !== undefined){
+        populateDropdown(socialDropdown, uniqueSocialDomains, "twitter-dropdown");
 
-                        if(hostName.length){
+        setDefaultStandinDomain(socialDomainNames, socialDropdown, "socialHost", "twitter");
 
-                            const path = extractPath(url, hostName);
-                            console.log("PATH IS:    " + path);
+        updateStorageOnChange(socialDropdown, "socialHost", socialDomainNames);
 
-                            if(path.length){
-
-                                const standin = createStandinUrl(path, data.videoHost);
-
-                                if(standin.length){
-
-                                    ////////////////////////////
-                                    chrome
-                                        .tabs
-                                        .create({
-                                            url: standin
-                                        })
-                                    /////////////////////////////
-                                } else {
-                                    console.log("something went wrong while finalizing the standin link")
-                                }
-                            } else {
-                                console.log("something went wrong while extracting the common url path")
-                            } 
-                        } else {
-                            console.log("something went wrong while extracting the host name")
-                        }
-                    });
-
-                } else {
-                    console.log("domain name picked is invalid")
-                }
-            });
-
-        });
     } else {
-        console.log("url switch button hasn't loaded into the document");
+        console.log("microblogging dropdown hasn't loaded into the document");
     }
 
+    const switchSocialButton = document.getElementById("social-standin-button");
+
+    openStandinOnClick(switchSocialButton, "socialHost", uniqueSocialDomains);
 }
 
 
 
-function setDefaultVideoDomain(domainNames, dropdown){
-    chrome.storage.local.get("videoHost", function(data){
-        if(! data.videoHost || ! data.videoHost.length){
-            chrome.storage.local.set({ "videoHost": domainNames["youtube"]});
-            dropdown.value = domainNames["youtube"];
+
+
+
+
+
+
+
+
+function setDefaultStandinDomain(domainNames, dropdown, key, defaultDomain){
+    chrome.storage.local.get([key], function(data){
+        if(! data[key] || ! data[key].length){
+            chrome.storage.local.set({ [key]: domainNames[defaultDomain]});
+            dropdown.value = domainNames[defaultDomain];
         } else {
-            dropdown.value = domainNames[data.videoHost];
+            dropdown.value = domainNames[data[key]];
         }       
     });
-
 }
 
+function updateStorageOnChange(dropdown, key, allDomainNames){
+    dropdown.addEventListener("change", function(event){
 
-const domainNames = {
+        chrome.storage.local.get([key], function(data){
+
+            const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
+
+            console.log("stored video domain is:     " + data[key]);
+            console.log("event target value:   " + event.target.value )
+            console.log("value:     " + allDomainNames[event.target.value])
+
+            chrome.storage.local.set({ [key]: allDomainNames[event.target.value]})
+        });
+
+        
+    });  
+}
+
+const videoDomainNames = {
     "youtube": "youtube",
     "yewtu.be": "yewtu.be",
     "yewtube": "yewtu.be",
@@ -125,15 +91,18 @@ const domainNames = {
     "youtu.be": "youtu.be",    
 };
 
+const socialDomainNames = {
+    "twitter": "twitter",
+    "nitter": "nitter",
+    "nitter.net": "nitter"
+};
 
-const domainNamesValuesOnly = Object.values(domainNames);//domainNames.map(item => Object.values(item)[0]);
 
-const uniqueDomains = [... new Set(domainNamesValuesOnly)];
+const videoDomainNamesValuesOnly = Object.values(videoDomainNames);
+const uniqueVideoDomains = [... new Set(videoDomainNamesValuesOnly)];
 
-// uniqueDomains.forEach(function(item){
-//     console.log(item)
-// })
-
+const socialDomainNamesValuesOnly = Object.values(socialDomainNames);
+const uniqueSocialDomains = [... new Set(socialDomainNamesValuesOnly)];
 
 function checkForValidUrl(url){
     if(url && url.length){
@@ -191,13 +160,94 @@ function createStandinUrl(path, newDomainHandle){
         case "youtu.be":
             standin += "youtu.be";
             break;
+
+        //social
+        case "twitter":
+        case "twitter.com":
+            standin += "twitter.com";
+            break;
+        case "nitter":
+        case "nitter.net":
+            standin += "nitter.net";
+            break;
+
         default:
-            standin += "youtube.com"
+            standin += "nope";//"youtube.com"
             break;
     }
 
     standin += "/" + path;
     return standin;
+}
+
+function populateDropdown(dropdown, uniqueDomains, id){
+    const defaultDomainName = dropdown.options[0].value;
+    const domainsWithoutDefault = uniqueDomains.filter(item => item !== defaultDomainName);
+    if(domainsWithoutDefault.length){
+        for(var i = 0; i < domainsWithoutDefault.length; i++){
+            const option = document.createElement("option");
+            option.setAttribute("class", id);
+            option.setAttribute("value", domainsWithoutDefault[i]);
+            option.innerHTML = domainsWithoutDefault[i].charAt(0).toUpperCase() + domainsWithoutDefault[i].slice(1);
+
+            dropdown.appendChild(option);
+        }            
+    } else { 
+        console.log("unique domain list empty"); 
+    }
+}
+
+function openStandinOnClick(switchSiteButton, key, uniqueDomains){
+    if(switchSiteButton !== null){
+        switchSiteButton.addEventListener("click", function(event){
+            console.log("clicked");
+
+            chrome.storage.local.get([key], function(data){
+                if(uniqueDomains.includes(data[key])){
+
+                    chrome.tabs.query({active: true}, (allTabs) => {
+                        const url = allTabs[0].url;
+
+                        let hostName = checkForValidUrl(url);
+
+                        if(hostName.length){
+
+                            const path = extractPath(url, hostName);
+                            console.log("PATH IS:    " + path);
+
+                            if(path.length){
+
+                                const standin = createStandinUrl(path, data[key]);
+
+                                if(standin.length){
+
+                                    ////////////////////////////
+                                    chrome
+                                        .tabs
+                                        .create({
+                                            url: standin
+                                        })
+                                    /////////////////////////////
+                                } else {
+                                    console.log("something went wrong while finalizing the standin link")
+                                }
+                            } else {
+                                console.log("something went wrong while extracting the common url path")
+                            } 
+                        } else {
+                            console.log("something went wrong while extracting the host name")
+                        }
+                    });
+
+                } else {
+                    console.log("domain name picked is invalid")
+                }
+            });
+
+        });
+    } else {
+        console.log("url switch button hasn't loaded into the document");
+    }    
 }
 
 
