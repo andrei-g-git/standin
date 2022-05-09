@@ -205,7 +205,7 @@ function openStandinOnClick(switchSiteButton, key, uniqueDomains){
             chrome.storage.local.get([key], function(data){
                 if(uniqueDomains.includes(data[key])){
 
-                    chrome.tabs.query({active: true}, (allTabs) => {
+                    chrome.tabs.query({active: true, currentWindow: true}, (allTabs) => {
                         const url = allTabs[0].url;
 
                         let hostName = checkForValidUrl(url);

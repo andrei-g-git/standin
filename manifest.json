@@ -22,7 +22,7 @@
     "permissions": [
         "notifications",
         "contextMenus",
-        "tabs",
+        "activeTab",
         "storage"
     ]
 }
