@@ -182,7 +182,7 @@ function createStandinUrl(path, newDomainHandle){
             break;
         case "invidio.xamh": 
         case "invidio": 
-            standin += "invidio.xamh";
+            standin += "invidio.xamh.de";
             break;
         case "piped": 
         case "piped.kavin.rocks": 
