@@ -21,12 +21,6 @@ function handleContextClick(event, browser, domainList){ //apparently I can't na
 
     const path = extractUrlPath(event.linkUrl, validDomain);
 
-    // const standinDomain = await loadStandinDomainName(validDomain, browser);
-
-    // openStandinlink(standinDomain, path, browser, event);
-
-    //testWrapper(validDomain, browser, path, event, loadStandinDomainName);
-
     loadStandinDomainName(validDomain, browser)
         .then((domain) => {
             openStandinlink(domain, path, browser, event);
@@ -35,13 +29,22 @@ function handleContextClick(event, browser, domainList){ //apparently I can't na
 }    
 
 const domainList = [
-    "https://youtube.com",
-    "https://youtu.be",
-    "https://yewtu.be",
-    "https://invidio.xamh.de",
-    "https://piped.kavin.rocks",
-    "https://twitter.com",
-    "https://nitter.net"
+    // "https://youtube.com",
+    // "https://youtu.be",
+    // "https://yewtu.be",
+    // "https://invidio.xamh.de",
+    // "https://piped.kavin.rocks",
+    // "https://twitter.com",
+    // "https://nitter.net",
+    // "https://mobile.twitter.com"
+    "youtube.com",
+    "youtu.be",
+    "yewtu.be",
+    "invidio.xamh.de",
+    "piped.kavin.rocks",
+    "twitter.com",
+    "nitter.net",
+    "mobile.twitter.com"    
 ];
 
 function onError(error){
@@ -51,9 +54,9 @@ function onError(error){
 function validateClickedLink(url, domainList){
     let validDomain;
     if(url && url.length){
-        let withoutWWW = url.replace("www.", ""); 
+        //let withoutWWW = url.replace("www.", ""); 
         for(let i = 0; i < domainList.length; i++){
-            if(withoutWWW.includes(domainList[i])){
+            if(/* withoutWWW */url.includes(domainList[i])){
                 validDomain = domainList[i];
                 break
             }
@@ -68,7 +71,7 @@ function validateClickedLink(url, domainList){
 function extractUrlPath(url, validDomain){
     let path;
     if(validDomain){
-        const withoutProtocol = validDomain.replace("https://", "");
+        const withoutProtocol = validDomain;//.replace("https://", "");
         const pathIndex = url.indexOf(withoutProtocol) + withoutProtocol.length; //this should start before the "/"
         path = url.substring(pathIndex);
         console.log(path)
@@ -111,40 +114,44 @@ async function loadStandinDomainName(sourceDomain, browser){
 
             if(storedHostName){
                 domain = "https://";
-                switch(storedHostName){ //repeating in popup.js, but can't export/import as module with plain html and js ... maybe I can save a map in local storage ... and that domain map could be editable by the user ...
-                    case "youtube":
-                        domain += "youtube.com";
-                        break;
-                    case "yewtu.be":
-                    case "yewtube":
-                        domain += "yewtu.be";
-                        break;
-                    case "invidio.xamh": 
-                    case "invidio": 
-                        domain += "invidio.xamh.de";
-                        break;
-                    case "piped": 
-                    case "piped.kavin.rocks": 
-                        domain += "piped.kavin.rocks";
-                        break;
-                    case "youtu.be":
-                        domain += "youtu.be";
-                        break;
+                // switch(storedHostName){ //repeating in popup.js, but can't export/import as module with plain html and js ... maybe I can save a map in local storage ... and that domain map could be editable by the user ...
+                //     case "youtube":
+                //         domain += "youtube.com";
+                //         break;
+                //     case "yewtu.be":
+                //     case "yewtube":
+                //         domain += "yewtu.be";
+                //         break;
+                //     case "invidio.xamh": 
+                //     case "invidio": 
+                //         domain += "invidio.xamh.de";
+                //         break;
+                //     case "piped": 
+                //     case "piped.kavin.rocks": 
+                //         domain += "piped.kavin.rocks";
+                //         break;
+                //     case "youtu.be":
+                //         domain += "youtu.be";
+                //         break;
             
-                    //social
-                    case "twitter":
-                    case "twitter.com":
-                        domain += "twitter.com";
-                        break;
-                    case "nitter":
-                    case "nitter.net":
-                        domain += "nitter.net";
-                        break;
+                //     //social
+                //     case "twitter":
+                //     case "twitter.com":
+                //     case "mobile.twitter":
+                //     case "mobile.twitter.com":                        
+                //         domain += "twitter.com";
+                //         break;
+                //     case "nitter":
+                //     case "nitter.net":
+                //         domain += "nitter.net";
+                //         break;
             
-                    default:
-                        domain += "nope";
-                        break;//"youtube.com"
-                }
+                //     default:
+                //         domain += "nope";
+                //         break;//"youtube.com"
+                // }
+
+                domain += storedHostName;
 
                 resolve(domain);
             } else {

@@ -7,11 +7,11 @@ function init(){
 
     if(youtubeDropdown !== null && youtubeDropdown !== undefined){
 
-        populateDropdown(youtubeDropdown, uniqueVideoDomains, "youtube-dropdown");
+        populateDropdown(youtubeDropdown, /* uniqueVideoDomains */videoDomainNames, "youtube-dropdown");
 
-        setDefaultStandinDomain(videoDomainNames, youtubeDropdown, "videoHost", "youtube"); 
+        setDefaultStandinDomain(/* videoDomainNames,  */youtubeDropdown, "videoHost", /* "youtube" */"youtube.com"); 
 
-        updateStorageOnChange(youtubeDropdown, "videoHost", videoDomainNames);
+        updateStorageOnChange(youtubeDropdown, "videoHost"/* , videoDomainNames */);
 
     } else {
         console.log("videos dropdown hasn't loaded into the document");
@@ -19,18 +19,18 @@ function init(){
 
     const switchVideoButton = document.getElementById("video-standin-button");
 
-    openStandinOnClick(switchVideoButton, "videoHost", uniqueVideoDomains);
+    openStandinOnClick(switchVideoButton, "videoHost", /* uniqueVideoDomains */videoDomainNames);
 
     ////////////////////////////////////////////////////
 
     const socialDropdown = document.getElementById("twitter-dropdown");
 
     if(socialDropdown !== null && socialDropdown !== undefined){
-        populateDropdown(socialDropdown, uniqueSocialDomains, "twitter-dropdown");
+        populateDropdown(socialDropdown, /* uniqueSocialDomains */socialDomainNames, "twitter-dropdown");
 
-        setDefaultStandinDomain(socialDomainNames, socialDropdown, "socialHost", "twitter");
+        setDefaultStandinDomain(/* socialDomainNames,  */socialDropdown, "socialHost", /* "twitter" */"twitter.com");
 
-        updateStorageOnChange(socialDropdown, "socialHost", socialDomainNames);
+        updateStorageOnChange(socialDropdown, "socialHost"/* , socialDomainNames */);
 
     } else {
         console.log("microblogging dropdown hasn't loaded into the document");
@@ -38,7 +38,7 @@ function init(){
 
     const switchSocialButton = document.getElementById("social-standin-button");
 
-    openStandinOnClick(switchSocialButton, "socialHost", uniqueSocialDomains);
+    openStandinOnClick(switchSocialButton, "socialHost", /* uniqueSocialDomains */socialDomainNames);
 }
 
 
@@ -51,18 +51,45 @@ function init(){
 
 
 
-function setDefaultStandinDomain(domainNames, dropdown, key, defaultDomain){
+// function setDefaultStandinDomain(domainNames, dropdown, key, defaultDomain){
+//     chrome.storage.local.get([key], function(data){
+//         if(! data[key] || ! data[key].length){
+//             chrome.storage.local.set({ [key]: domainNames[defaultDomain]});
+//             dropdown.value = domainNames[defaultDomain];
+//         } else {
+//             dropdown.value = domainNames[data[key]];
+//         }       
+//     });
+// }
+function setDefaultStandinDomain(dropdown, key, defaultDomain){
     chrome.storage.local.get([key], function(data){
         if(! data[key] || ! data[key].length){
-            chrome.storage.local.set({ [key]: domainNames[defaultDomain]});
-            dropdown.value = domainNames[defaultDomain];
+            chrome.storage.local.set({ [key]: defaultDomain});
+            dropdown.value = defaultDomain;
         } else {
-            dropdown.value = domainNames[data[key]];
+            dropdown.value = data[key];
         }       
     });
 }
 
-function updateStorageOnChange(dropdown, key, allDomainNames){
+// function updateStorageOnChange(dropdown, key, allDomainNames){
+//     dropdown.addEventListener("change", function(event){
+
+//         chrome.storage.local.get([key], function(data){
+
+//             const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
+
+//             console.log("stored video domain is:     " + data[key]);
+//             console.log("event target value:   " + event.target.value )
+//             console.log("value:     " + allDomainNames[event.target.value])
+
+//             chrome.storage.local.set({ [key]: allDomainNames[event.target.value]})
+//         });
+
+        
+//     });  
+// }
+function updateStorageOnChange(dropdown, key){
     dropdown.addEventListener("change", function(event){
 
         chrome.storage.local.get([key], function(data){
@@ -71,31 +98,42 @@ function updateStorageOnChange(dropdown, key, allDomainNames){
 
             console.log("stored video domain is:     " + data[key]);
             console.log("event target value:   " + event.target.value )
-            console.log("value:     " + allDomainNames[event.target.value])
 
-            chrome.storage.local.set({ [key]: allDomainNames[event.target.value]})
+            chrome.storage.local.set({ [key]: event.target.value})
         });
 
         
     });  
 }
 
-const videoDomainNames = {
-    "youtube": "youtube",
-    "yewtu.be": "yewtu.be",
-    "yewtube": "yewtu.be",
-    "invidio.xamh": "invidio.xamh",
-    "invidio": "invidio.xamh",
-    "piped": "piped",
-    "piped.kavin.rocks": "piped",
-    "youtu.be": "youtu.be",    
-};
+const videoDomainNames = [
+    // "youtube": "youtube",
+    // "yewtu.be": "yewtu.be",
+    // "yewtube": "yewtu.be",
+    // "invidio.xamh": "invidio.xamh",
+    // "invidio": "invidio.xamh",
+    // "piped": "piped",
+    // "piped.kavin.rocks": "piped",
+    // "youtu.be": "youtu.be",    
+    "youtube.com",
+    "yewtu.be",
+    "invidio.xamh.de",
+    "piped.kavin.rocks",
+    "youtu.be"      
+];
 
-const socialDomainNames = {
-    "twitter": "twitter",
-    "nitter": "nitter",
-    "nitter.net": "nitter"
-};
+// const socialDomainNames = {
+//     "twitter": "twitter",
+//     "nitter": "nitter",
+//     "nitter.net": "nitter",
+//     "mobile.twitter": "twitter"
+// };
+
+const socialDomainNames = [
+    "twitter.com",
+    "nitter.net",
+    "mobile.twitter.com"
+];
 
 
 const videoDomainNamesValuesOnly = Object.values(videoDomainNames);
@@ -138,43 +176,47 @@ function extractPath(url, hostName){
     return url.substring(pathStart);
 }
 
-function createStandinUrl(path, newDomainHandle){
+function createStandinUrl(path, newDomain/* Handle */){
     let standin = "https://";
 
-    switch(newDomainHandle){ //this could have been a map or object...
-        case "youtube":
-            standin += "youtube.com";
-            break;
-        case "yewtu.be":
-        case "yewtube":
-            standin += "yewtu.be";
-            break;
-        case "invidio.xamh": 
-        case "invidio": 
-            standin += "invidio.xamh.de";
-            break;
-        case "piped": 
-        case "piped.kavin.rocks": 
-            standin += "piped.kavin.rocks";
-            break;
-        case "youtu.be":
-            standin += "youtu.be";
-            break;
+    // switch(newDomainHandle){ //this could have been a map or object...
+    //     case "youtube":
+    //         standin += "youtube.com";
+    //         break;
+    //     case "yewtu.be":
+    //     case "yewtube":
+    //         standin += "yewtu.be";
+    //         break;
+    //     case "invidio.xamh": 
+    //     case "invidio": 
+    //         standin += "invidio.xamh.de";
+    //         break;
+    //     case "piped": 
+    //     case "piped.kavin.rocks": 
+    //         standin += "piped.kavin.rocks";
+    //         break;
+    //     case "youtu.be":
+    //         standin += "youtu.be";
+    //         break;
 
-        //social
-        case "twitter":
-        case "twitter.com":
-            standin += "twitter.com";
-            break;
-        case "nitter":
-        case "nitter.net":
-            standin += "nitter.net";
-            break;
+    //     //social
+    //     case "twitter":
+    //     case "twitter.com":
+    //     case "mobile.twitter":
+    //     case "mobile.twitter.com":
+    //         standin += "twitter.com";
+    //         break;
+    //     case "nitter":
+    //     case "nitter.net":
+    //         standin += "nitter.net";
+    //         break;
 
-        default:
-            standin += "nope";//"youtube.com"
-            break;
-    }
+    //     default:
+    //         standin += "nope";//"youtube.com"
+    //         break;
+    // }
+
+    standin += newDomain;
 
     standin += "/" + path;
     return standin;
@@ -188,7 +230,7 @@ function populateDropdown(dropdown, uniqueDomains, id){
             const option = document.createElement("option");
             option.setAttribute("class", id);
             option.setAttribute("value", domainsWithoutDefault[i]);
-            option.innerHTML = domainsWithoutDefault[i].charAt(0).toUpperCase() + domainsWithoutDefault[i].slice(1);
+            option.innerHTML = domainsWithoutDefault[i];//.charAt(0).toUpperCase() + domainsWithoutDefault[i].slice(1);
 
             dropdown.appendChild(option);
         }            
