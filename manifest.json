@@ -19,7 +19,8 @@
         "scripts": [
             "js/context.js",
             "js/popup.js",
-            "js/options.js"
+            "js/options.js",
+            "js/domains.js"
         ],
         "persistent": false
     },

@@ -56,7 +56,7 @@ function init(){
     const optionsButton = document.getElementById("options-button");
     if(optionsButton){
         optionsButton.addEventListener("click", function(){
-            browser.tabs.create({url: "options.html"}, () => console.log("options page should open"))
+            /* browser */chrome.tabs.create({url: "options.html"}, () => console.log("options page should open"))
         });        
     }
 
@@ -146,6 +146,10 @@ const allValidDomains = [
     "https://nitter.net",
     //reddit
     "https://teddit.net/",
+    //medium
+    "https://scribe.rip/",
+    //ticktock ... god forgive me for I have enabled cancer
+    "https://proxitok.herokuapp.com/", 
 ];
 
 function checkForValidUrl(url){

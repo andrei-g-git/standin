@@ -1,24 +1,28 @@
 document.addEventListener("DOMContentLoaded", init);
 
 function init(){
-    listenDomainSubmission(document, "video");
+
 }
 
-function listenDomainSubmission(doc, affix){
-    let videoDomainForm = doc.getElementById(`${affix}-domain-form`);
-    if(videoDomainForm){
-        videoDomainForm.addEventListener("submit", function(event){
-            event.preventDefault();
+function populateChecboxes(){
+    
+}
 
-            const form = event.target;
-            const textField = form.elements[`${affix}-domain-textfield`];
+function createChecboxGroup(index, domain){
+    let checkbox = document.createElement("input");
+    checkbox.setAttribute("type", "checkbox");
+    checkbox.setAttribute("class", "domain-checkbox");
+    checkbox.setAttribute("name", "checbox-" + index);
 
-            console.log(textField.value);
+    let label = document.createElement("label");
+    label.setAttribute("for", "checbox-" + index);
+    label.innerHTML = domain;
+}
 
-
-
-            //validateDomain(domain, validDomains);
-        });        
-    }
-
+async function getDataFromStorage(browser, ...keys){
+    return new Promise((resolve, reject) => {
+        browser.storage.local.get([...keys], function(data){
+            resolve(data);
+        });
+    });
 }
