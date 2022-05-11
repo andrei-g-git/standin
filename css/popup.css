@@ -1,13 +1,41 @@
+.main-container{
+    background-color: aquamarine;
+
+    width: 150px;
+
+    padding: 0 3px; 
+}
+
 .dropdown-container{
     display: flex;
     flex-direction: column;
     align-items: flex-start;
 
-    background-color: aquamarine;
+    /* background-color: aquamarine; */
 
-    height: 200px;
+    height: auto;
+    min-height: 100px;
+}
+
+.standin-button-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    height: auto;
+    min-height: 70px;
 }
 
 .dropdown{
     margin: 10px 0;
+}
+
+.switch-site-button{
+    margin: 10px 0;
+}
+
+@media(max-width: 480px){ /* don't nest when using plain css */
+    .main-container{
+        width: 100%;
+    }
 }

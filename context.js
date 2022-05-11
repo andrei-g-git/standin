@@ -114,42 +114,6 @@ async function loadStandinDomainName(sourceDomain, browser){
 
             if(storedHostName){
                 domain = "https://";
-                // switch(storedHostName){ //repeating in popup.js, but can't export/import as module with plain html and js ... maybe I can save a map in local storage ... and that domain map could be editable by the user ...
-                //     case "youtube":
-                //         domain += "youtube.com";
-                //         break;
-                //     case "yewtu.be":
-                //     case "yewtube":
-                //         domain += "yewtu.be";
-                //         break;
-                //     case "invidio.xamh": 
-                //     case "invidio": 
-                //         domain += "invidio.xamh.de";
-                //         break;
-                //     case "piped": 
-                //     case "piped.kavin.rocks": 
-                //         domain += "piped.kavin.rocks";
-                //         break;
-                //     case "youtu.be":
-                //         domain += "youtu.be";
-                //         break;
-            
-                //     //social
-                //     case "twitter":
-                //     case "twitter.com":
-                //     case "mobile.twitter":
-                //     case "mobile.twitter.com":                        
-                //         domain += "twitter.com";
-                //         break;
-                //     case "nitter":
-                //     case "nitter.net":
-                //         domain += "nitter.net";
-                //         break;
-            
-                //     default:
-                //         domain += "nope";
-                //         break;//"youtube.com"
-                // }
 
                 domain += storedHostName;
 

@@ -4,56 +4,66 @@
         <title>
             Standin
         </title>
+
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+
         <link href="css/popup.css" rel="stylesheet">
 
         <script src="popup.js"></script>
     </head>
 
     <body>
-        <div id="dropdown-container"
-            class="dropdown-container"
-        >
-
-            <!-- YOUTUBE -->
-            <select id="youtube-dropdown" 
-                class="dropdown"
+        <div class="main-container">
+            <div id="dropdown-container"
+                class="dropdown-container"
             >
 
-                <option class="dropdown-option"
-                    value="youtube.com"
+                <!-- YOUTUBE -->
+                <select id="youtube-dropdown" 
+                    class="dropdown"
                 >
-                    youtube.com
-                </option> 
-            
-            </select>
 
-            <!-- TWITTER -->
-            <select id="twitter-dropdown"
-                class="dropdown"
-            >
+                    <option class="dropdown-option"
+                        value="youtube.com"
+                    >
+                        youtube.com
+                    </option> 
+                
+                </select>
 
-                <option class="dropdown-option"
-                    value="twitter.com"
-                    selected
+                <!-- TWITTER -->
+                <select id="twitter-dropdown"
+                    class="dropdown"
                 >
-                    twitter.com
-                </option>
 
-            </select>
+                    <option class="dropdown-option"
+                        value="twitter.com"
+                        selected
+                    >
+                        twitter.com
+                    </option>
+
+                </select>
+
+            </div>
+
+            <div class="standin-button-container">
+                <button id="video-standin-button"
+                    class="switch-site-button"
+                > 
+                    Switch youtube host
+                </button>
+
+                <button id="social-standin-button"
+                    class="switch-site-button"
+                >
+                    Switch twitter host
+                </button>
+
+            </div>
+
 
         </div>
-
-        <button id="video-standin-button"
-            class="switch-site-button"
-        >
-            Switch youtube host!
-        </button>
-
-        <button id="social-standin-button"
-            class="switch-site-button"
-        >
-            Switch twitter host!
-        </button>
 
         <!-- SCRIPTS -->
         <!-- <script src="popup.js"></script> -->

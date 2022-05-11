@@ -7,11 +7,16 @@ function init(){
 
     if(youtubeDropdown !== null && youtubeDropdown !== undefined){
 
-        populateDropdown(youtubeDropdown, /* uniqueVideoDomains */videoDomainNames, "youtube-dropdown");
+        populateDropdown(youtubeDropdown, videoDomainNames, "youtube-dropdown");
 
-        setDefaultStandinDomain(/* videoDomainNames,  */youtubeDropdown, "videoHost", /* "youtube" */"youtube.com"); 
+        setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
+            .then(() => {
+                updateStorageOnChange(youtubeDropdown, "videoHost")
+                    .catch(err => console.error(err));
+            })
+            .catch(err => console.error(err));
 
-        updateStorageOnChange(youtubeDropdown, "videoHost"/* , videoDomainNames */);
+        //updateStorageOnChange(youtubeDropdown, "videoHost");
 
     } else {
         console.log("videos dropdown hasn't loaded into the document");
@@ -19,18 +24,23 @@ function init(){
 
     const switchVideoButton = document.getElementById("video-standin-button");
 
-    openStandinOnClick(switchVideoButton, "videoHost", /* uniqueVideoDomains */videoDomainNames);
+    openStandinOnClick(switchVideoButton, "videoHost", videoDomainNames);
 
     ////////////////////////////////////////////////////
 
     const socialDropdown = document.getElementById("twitter-dropdown");
 
     if(socialDropdown !== null && socialDropdown !== undefined){
-        populateDropdown(socialDropdown, /* uniqueSocialDomains */socialDomainNames, "twitter-dropdown");
+        populateDropdown(socialDropdown, socialDomainNames, "twitter-dropdown");
 
-        setDefaultStandinDomain(/* socialDomainNames,  */socialDropdown, "socialHost", /* "twitter" */"twitter.com");
+        setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
+            .then(() => {
+                updateStorageOnChange(socialDropdown, "socialHost")
+                    .catch(err => console.error(err));
+            })
+            .catch(err => console.error(err));
 
-        updateStorageOnChange(socialDropdown, "socialHost"/* , socialDomainNames */);
+        //updateStorageOnChange(socialDropdown, "socialHost");
 
     } else {
         console.log("microblogging dropdown hasn't loaded into the document");
@@ -38,96 +48,56 @@ function init(){
 
     const switchSocialButton = document.getElementById("social-standin-button");
 
-    openStandinOnClick(switchSocialButton, "socialHost", /* uniqueSocialDomains */socialDomainNames);
+    openStandinOnClick(switchSocialButton, "socialHost", socialDomainNames);
 }
 
-
-
-
-
-
-
-
-
-
-
-// function setDefaultStandinDomain(domainNames, dropdown, key, defaultDomain){
-//     chrome.storage.local.get([key], function(data){
-//         if(! data[key] || ! data[key].length){
-//             chrome.storage.local.set({ [key]: domainNames[defaultDomain]});
-//             dropdown.value = domainNames[defaultDomain];
-//         } else {
-//             dropdown.value = domainNames[data[key]];
-//         }       
-//     });
-// }
-function setDefaultStandinDomain(dropdown, key, defaultDomain){
-    chrome.storage.local.get([key], function(data){
-        if(! data[key] || ! data[key].length){
-            chrome.storage.local.set({ [key]: defaultDomain});
-            dropdown.value = defaultDomain;
-        } else {
-            dropdown.value = data[key];
-        }       
-    });
-}
-
-// function updateStorageOnChange(dropdown, key, allDomainNames){
-//     dropdown.addEventListener("change", function(event){
-
-//         chrome.storage.local.get([key], function(data){
-
-//             const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
-
-//             console.log("stored video domain is:     " + data[key]);
-//             console.log("event target value:   " + event.target.value )
-//             console.log("value:     " + allDomainNames[event.target.value])
-
-//             chrome.storage.local.set({ [key]: allDomainNames[event.target.value]})
-//         });
-
-        
-//     });  
-// }
-function updateStorageOnChange(dropdown, key){
-    dropdown.addEventListener("change", function(event){
-
-        chrome.storage.local.get([key], function(data){
-
-            const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
-
-            console.log("stored video domain is:     " + data[key]);
-            console.log("event target value:   " + event.target.value )
-
-            chrome.storage.local.set({ [key]: event.target.value})
+async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
+    return new Promise((resolve, reject) => {                              
+        /* await */ chrome.storage.local.get([key], function(data){
+            if(! data[key] || ! data[key].length){
+                chrome.storage.local.set({ [key]: defaultDomain});
+                dropdown.value = defaultDomain;
+            } else {
+                dropdown.value = data[key];
+            }   
+            
+            if( ! data) reject(); //I'm not too sure about this... maybe there isn't supposed to be a a data object on a fresh install ... but the functions dependednt on this promise seem to get called just fine in this event...
         });
 
-        
+        resolve(dropdown.value);
+    });
+
+}
+
+function updateStorageOnChange(dropdown, key){  //on fresh install this promise might fail 
+    dropdown.addEventListener("change", async function(event){
+        return new Promise((resolve, reject) => {
+            /* await */ chrome.storage.local.get([key], function(data){
+
+                const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
+
+                console.log("stored video domain is:     " + data[key]);
+                console.log("event target value:   " + event.target.value )
+
+                chrome.storage.local.set({ [key]: event.target.value});
+
+                resolve(data[key]);
+
+                if( ! data[key]) reject();
+            });
+
+            
+        }); 
     });  
 }
 
-const videoDomainNames = [
-    // "youtube": "youtube",
-    // "yewtu.be": "yewtu.be",
-    // "yewtube": "yewtu.be",
-    // "invidio.xamh": "invidio.xamh",
-    // "invidio": "invidio.xamh",
-    // "piped": "piped",
-    // "piped.kavin.rocks": "piped",
-    // "youtu.be": "youtu.be",    
+const videoDomainNames = [   
     "youtube.com",
     "yewtu.be",
     "invidio.xamh.de",
     "piped.kavin.rocks",
     "youtu.be"      
 ];
-
-// const socialDomainNames = {
-//     "twitter": "twitter",
-//     "nitter": "nitter",
-//     "nitter.net": "nitter",
-//     "mobile.twitter": "twitter"
-// };
 
 const socialDomainNames = [
     "twitter.com",
@@ -136,11 +106,11 @@ const socialDomainNames = [
 ];
 
 
-const videoDomainNamesValuesOnly = Object.values(videoDomainNames);
-const uniqueVideoDomains = [... new Set(videoDomainNamesValuesOnly)];
+// const videoDomainNamesValuesOnly = Object.values(videoDomainNames);
+// const uniqueVideoDomains = [... new Set(videoDomainNamesValuesOnly)];
 
-const socialDomainNamesValuesOnly = Object.values(socialDomainNames);
-const uniqueSocialDomains = [... new Set(socialDomainNamesValuesOnly)];
+// const socialDomainNamesValuesOnly = Object.values(socialDomainNames);
+// const uniqueSocialDomains = [... new Set(socialDomainNamesValuesOnly)];
 
 function checkForValidUrl(url){
     if(url && url.length){
@@ -176,45 +146,8 @@ function extractPath(url, hostName){
     return url.substring(pathStart);
 }
 
-function createStandinUrl(path, newDomain/* Handle */){
+function createStandinUrl(path, newDomain){
     let standin = "https://";
-
-    // switch(newDomainHandle){ //this could have been a map or object...
-    //     case "youtube":
-    //         standin += "youtube.com";
-    //         break;
-    //     case "yewtu.be":
-    //     case "yewtube":
-    //         standin += "yewtu.be";
-    //         break;
-    //     case "invidio.xamh": 
-    //     case "invidio": 
-    //         standin += "invidio.xamh.de";
-    //         break;
-    //     case "piped": 
-    //     case "piped.kavin.rocks": 
-    //         standin += "piped.kavin.rocks";
-    //         break;
-    //     case "youtu.be":
-    //         standin += "youtu.be";
-    //         break;
-
-    //     //social
-    //     case "twitter":
-    //     case "twitter.com":
-    //     case "mobile.twitter":
-    //     case "mobile.twitter.com":
-    //         standin += "twitter.com";
-    //         break;
-    //     case "nitter":
-    //     case "nitter.net":
-    //         standin += "nitter.net";
-    //         break;
-
-    //     default:
-    //         standin += "nope";//"youtube.com"
-    //         break;
-    // }
 
     standin += newDomain;
 
@@ -230,7 +163,7 @@ function populateDropdown(dropdown, uniqueDomains, id){
             const option = document.createElement("option");
             option.setAttribute("class", id);
             option.setAttribute("value", domainsWithoutDefault[i]);
-            option.innerHTML = domainsWithoutDefault[i];//.charAt(0).toUpperCase() + domainsWithoutDefault[i].slice(1);
+            option.innerHTML = domainsWithoutDefault[i];
 
             dropdown.appendChild(option);
         }            
