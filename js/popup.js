@@ -49,6 +49,17 @@ function init(){
     const switchSocialButton = document.getElementById("social-standin-button");
 
     openStandinOnClick(switchSocialButton, "socialHost", socialDomainNames);
+
+
+
+    //test
+    const optionsButton = document.getElementById("options-button");
+    if(optionsButton){
+        optionsButton.addEventListener("click", function(){
+            browser.tabs.create({url: "options.html"}, () => console.log("options page should open"))
+        });        
+    }
+
 }
 
 async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
@@ -105,12 +116,37 @@ const socialDomainNames = [
     "mobile.twitter.com"
 ];
 
-
-// const videoDomainNamesValuesOnly = Object.values(videoDomainNames);
-// const uniqueVideoDomains = [... new Set(videoDomainNamesValuesOnly)];
-
-// const socialDomainNamesValuesOnly = Object.values(socialDomainNames);
-// const uniqueSocialDomains = [... new Set(socialDomainNamesValuesOnly)];
+const allValidDomains = [
+    //piped
+    "https://kavin.rocks",
+    "https://silkky.cloud",
+    "https://tokhmi.xyz",
+    "https://moomoo.me",
+    "https://il.ax",
+    "https://syncpundit.com",
+    "https://mha.fi",
+    "https://mint.lgbt",
+    "https://privacy.com.de",
+    "https://notyourcomputer.net",
+    //invidious
+    "https://yewtu.be",
+    "https://vid.puffyan.us",
+    "https://invidious.snopyta.org",
+    "https://invidious.kavin.rocks",
+    "https://inv.riverside.rocks",
+    "https://invidious.osi.kr",
+    "https://y.com.sb",
+    "https://tube.cthd.icu",
+    "https://invidious.flokinet.to",
+    "https://yt.artemislena.eu",
+    "https://invidious.se...ivacy.com",
+    "https://inv.bp.projectsegfau.lt",
+    "https://invidious.lunar.icu",
+    //nitter
+    "https://nitter.net",
+    //reddit
+    "https://teddit.net/",
+];
 
 function checkForValidUrl(url){
     if(url && url.length){
