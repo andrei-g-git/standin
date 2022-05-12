@@ -1,1 +1,1 @@
-MIT
+GNU General Public License (GPL)
