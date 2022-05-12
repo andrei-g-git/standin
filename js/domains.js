@@ -15,7 +15,31 @@ const domainsObject = {
     ticktockAlts: getTicktockAlts()    
 };
 
-storePossibleDomains(domainsObject, chrome, "domains");
+const initialDropdownData = {
+    popupDomains: {
+        youtubeAlts: [
+            "https://kavin.rocks",
+            "https://yewtu.be",
+        ],
+        twitterAlts: [
+            "https://nitter.net",
+        ],
+        redditAlts: [
+
+        ],
+        mediumAlts: [
+
+        ],
+        ticktockAlts: [
+
+        ]        
+    }
+
+};
+
+storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
+
+storeDataOnInstall(initialDropdownData, chrome, "defaultPopupDomains");
 
 function storePossibleDomains(domainsObject, browser, key){
     getDataFromStorage(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)
@@ -24,6 +48,15 @@ function storePossibleDomains(domainsObject, browser, key){
                 storeDataToStorage(browser, domainsObject);
             }
         });
+}
+
+function storeDataOnInstall(initialData, browser, key){ //use this instead, 
+    getDataFromStorage(browser, key)   
+    .then((data) => {
+        if( ! data || ! data[key]){
+            storeDataToStorage(browser, initialData);
+        }
+    });    
 }
 
 function mergeAllDomains(...args){

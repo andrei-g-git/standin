@@ -11,19 +11,10 @@ function init(){
     ];
     let checkboxContainer = document.getElementById("checkbox-container");
 
-    // for (const a of document.querySelectorAll("div", "button")) {
-    //     if (a.textContent.includes("Options")) {
-    //       console.log(a.textContent)
-    //     }
-    //   }
-
     if(checkboxContainer){ 
         getDataFromStorage(chrome, ...domainKeys)
             .then(domainGroups => {
                 if(Object.keys(domainGroups).length){
-
-                    // const test = [...Object.values(domainGroups)];
-                    // console.log(...Object.values(domainGroups))
 
                     createCheckboxGroups(
                         document, 
@@ -35,8 +26,14 @@ function init(){
                 } else {
                     console.log("did not yet load domains")
                 }
+
+
+                handleAllCheckboxGroups(document, "checkbox-and-label", handleCheckbox);
+
+
             })
-            .catch(err => console.error(err));        
+            .catch(err => console.error(err));     
+
     }
 
 
@@ -53,6 +50,7 @@ function createCheckboxGroups(doc, parent, /* ... */domainGroups, domainGroupNam
         let groupLabel = doc.createElement("label");
         groupLabel.setAttribute("class", "checkbox-group-label");
         groupLabel.setAttribute("for", domainGroupNames[index]);
+        groupLabel.setAttribute("value", domainGroupNames[index]);
         groupLabel.innerHTML = domainGroupNames[index];
 
         let groupWithLabel = doc.createElement("div");
@@ -82,16 +80,70 @@ function createCheckbox(doc, domain, index, groupIndex){
     checkbox.setAttribute("id", "checbox-" + groupIndex + "-" + index);
 
     let label = doc.createElement("label");
+    label.setAttribute("class", "domain-label");
     label.setAttribute("for", "checbox-" + groupIndex + "-" + index);
     label.innerHTML = domain;
 
     let checkboxAndLabel = doc.createElement("div");
     checkboxAndLabel.setAttribute("class", "checkbox-and-label");
+    checkboxAndLabel.setAttribute("id", "checkbox-and-label-" + groupIndex + "-" + index);
 
     checkboxAndLabel.appendChild(checkbox);
     checkboxAndLabel.appendChild(label);
 
     return checkboxAndLabel;
+}
+
+function handleCheckbox(checkboxAndLabel){
+    //I guess queryselectorall only works on the entire document?...
+    // let label = checkboxAndLabel.querySelectorAll("label, div[class*='label']");
+    // let checkbox = checkboxAndLabel.querySelectorAll("input, div[class*='checkbox'], div[class*='check-box'], div[class*='check']")
+
+    let checkboxGroup = checkboxAndLabel.parentNode;
+    let groupWithLabel = checkboxGroup.parentNode;
+    let groupLabel = groupWithLabel.getElementsByTagName("label")[0];
+    
+
+    let label = checkboxAndLabel.getElementsByTagName("label")[0];
+    let checkbox = checkboxAndLabel.getElementsByTagName("input")[0];
+
+    checkbox.addEventListener("change", function(event){
+
+        console.log(groupLabel.innerHTML);
+
+        getDataFromStorage(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
+            .then(data => {
+                let popupDomains = data["popupDomains"];
+
+                let newPopupDomains = null;
+
+                if(event.target.checked){
+                    console.log("true: " + label.innerHTML)
+
+                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML);
+
+                } else {
+                    console.log("false: " + label.innerHTML)
+
+                    newPopupDomains = removePopupDomain(popupDomains, label.innerHTML);
+
+                    console.log(JSON.stringify(newPopupDomains))
+                }
+
+                storeDataToStorage(chrome, {popupDomains, newPopupDomains})
+            });
+
+
+    });
+
+}
+
+function handleAllCheckboxGroups(doc, className, handleCheckboxCallback){
+    let checkboxGroups = doc.getElementsByClassName(className);
+
+    for(let i = 0; i < checkboxGroups.length; i++){
+        handleCheckboxCallback(checkboxGroups[i]);
+    }
 }
 
 async function getDataFromStorage(browser, ...keys){
@@ -100,4 +152,45 @@ async function getDataFromStorage(browser, ...keys){
             resolve(data);
         });
     });
+}
+
+async function storeDataToStorage(browser, data){
+    return new Promise((resolve, reject) => {
+        browser.storage.local.set(data, function(){
+            resolve("sent");
+        });
+    });
+}
+
+function addPopupDomain(popupDomains, domain){ //mucho repeato
+    Object.entries(popupDomains).forEach(altGroup => { 
+        let realAltGroup = altGroup[1];
+        const abc = 123;
+        if(altGroup.length &&   !    realAltGroup.includes(domain)){ 
+
+            // realAltGroup.splice(
+            //     realAltGroup.indexOf(domain),
+            //     1
+            // );
+            realAltGroup.push(domain)
+        }
+    });
+
+    return popupDomains;    
+}
+
+function removePopupDomain(popupDomains, domain) {
+    Object.entries(popupDomains).forEach(altGroup => { // IF NESTED ENTRIES IT WILL RETURN THE PARENT ENTRY AS item 0 AND item 1 AS THE CHILD ENTRIES
+        let realAltGroup = altGroup[1];
+        const abc = 123;
+        if(altGroup.length && realAltGroup.includes(domain)){ //for some reason indexOf doesn't work, it just skips everything
+
+            realAltGroup.splice(
+                realAltGroup.indexOf(domain),
+                1
+            );
+        }
+    });
+
+    return popupDomains;
 }

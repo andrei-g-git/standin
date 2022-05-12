@@ -3,53 +3,66 @@ document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
 
-    const youtubeDropdown = document.getElementById("youtube-dropdown");    
+    //LOAD video, twitter etc domain names here -- populate the drowdown
+    // const dropdownData = chrome.storage.local.get("popupDomains", (data) => {
+    //     //data.forEach(group => console.log(group))
+    //     console.log(JSON.stringify(data["popupDomains"]))
+    // })
 
-    if(youtubeDropdown !== null && youtubeDropdown !== undefined){
+    getDataFromStorage(chrome, "popupDomains")
+        .then(data => {
 
-        populateDropdown(youtubeDropdown, videoDomainNames, "youtube-dropdown");
+            const popupDomains = data["popupDomains"]
 
-        setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
-            .then(() => {
-                updateStorageOnChange(youtubeDropdown, "videoHost")
+            const youtubeDropdown = document.getElementById("youtube-dropdown");    
+
+            if(youtubeDropdown !== null && youtubeDropdown !== undefined){
+
+                populateDropdown(youtubeDropdown, /* videoDomainNames */popupDomains["youtubeAlts"], "youtube-dropdown");
+
+                setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
+                    .then(() => {
+                        updateStorageOnChange(youtubeDropdown, "videoHost")
+                            .catch(err => console.error(err));
+                    })
                     .catch(err => console.error(err));
-            })
-            .catch(err => console.error(err));
 
-        //updateStorageOnChange(youtubeDropdown, "videoHost");
+                //updateStorageOnChange(youtubeDropdown, "videoHost");
 
-    } else {
-        console.log("videos dropdown hasn't loaded into the document");
-    }
+            } else {
+                console.log("videos dropdown hasn't loaded into the document");
+            }
 
-    const switchVideoButton = document.getElementById("video-standin-button");
+            const switchVideoButton = document.getElementById("video-standin-button");
 
-    openStandinOnClick(switchVideoButton, "videoHost", videoDomainNames);
+            openStandinOnClick(switchVideoButton, "videoHost", /* videoDomainNames */popupDomains["youtubeAlts"]);
 
-    ////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////
 
-    const socialDropdown = document.getElementById("twitter-dropdown");
+            const socialDropdown = document.getElementById("twitter-dropdown");
 
-    if(socialDropdown !== null && socialDropdown !== undefined){
-        populateDropdown(socialDropdown, socialDomainNames, "twitter-dropdown");
+            if(socialDropdown !== null && socialDropdown !== undefined){
+                populateDropdown(socialDropdown, /* socialDomainNames */popupDomains["twitterAlts"], "twitter-dropdown");
 
-        setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
-            .then(() => {
-                updateStorageOnChange(socialDropdown, "socialHost")
+                setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
+                    .then(() => {
+                        updateStorageOnChange(socialDropdown, "socialHost")
+                            .catch(err => console.error(err));
+                    })
                     .catch(err => console.error(err));
-            })
-            .catch(err => console.error(err));
 
-        //updateStorageOnChange(socialDropdown, "socialHost");
+                //updateStorageOnChange(socialDropdown, "socialHost");
 
-    } else {
-        console.log("microblogging dropdown hasn't loaded into the document");
-    }
+            } else {
+                console.log("microblogging dropdown hasn't loaded into the document");
+            }
 
-    const switchSocialButton = document.getElementById("social-standin-button");
+            const switchSocialButton = document.getElementById("social-standin-button");
 
-    openStandinOnClick(switchSocialButton, "socialHost", socialDomainNames);
+            openStandinOnClick(switchSocialButton, "socialHost", /* socialDomainNames */popupDomains["twitterAlts"]);
 
+
+        }) //#################################################### for >>>   .then(data => {
 
 
     //test
@@ -60,6 +73,14 @@ function init(){
         });        
     }
 
+}
+
+async function getDataFromStorage(browser, ...keys){
+    return new Promise((resolve, reject) => {
+        browser.storage.local.get([...keys], function(data){
+            resolve(data);
+        });
+    });
 }
 
 async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
