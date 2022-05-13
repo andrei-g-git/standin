@@ -120,7 +120,7 @@ function handleCheckbox(checkboxAndLabel){
                 if(event.target.checked){
                     console.log("true: " + label.innerHTML)
 
-                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML);
+                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML, groupLabel.innerHTML);
 
                 } else {
                     console.log("false: " + label.innerHTML)
@@ -162,17 +162,16 @@ async function storeDataToStorage(browser, data){
     });
 }
 
-function addPopupDomain(popupDomains, domain){ //mucho repeato
+function addPopupDomain(popupDomains, domain, domainGroupName){ //mucho repeato
     Object.entries(popupDomains).forEach(altGroup => { 
+        let groupHandle = altGroup[0];
         let realAltGroup = altGroup[1];
         const abc = 123;
-        if(altGroup.length &&   !    realAltGroup.includes(domain)){ 
+        if(groupHandle === domainGroupName){
+            if(altGroup.length &&   !    realAltGroup.includes(domain)){ 
 
-            // realAltGroup.splice(
-            //     realAltGroup.indexOf(domain),
-            //     1
-            // );
-            realAltGroup.push(domain)
+                realAltGroup.push(domain)
+            }            
         }
     });
 

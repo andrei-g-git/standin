@@ -18,7 +18,7 @@ const domainsObject = {
 const initialDropdownData = {
     popupDomains: {
         youtubeAlts: [
-            "https://kavin.rocks",
+            "https://piped.kavin.rocks",
             "https://yewtu.be",
         ],
         twitterAlts: [
@@ -84,16 +84,13 @@ async function storeDataToStorage(browser, data){
 function getYoutubeAlts(){
     return [
         //piped
-        "https://kavin.rocks",
-        "https://silkky.cloud",
-        "https://tokhmi.xyz",
-        "https://moomoo.me",
-        "https://il.ax",
-        "https://syncpundit.com",
-        "https://mha.fi",
-        "https://mint.lgbt",
-        "https://privacy.com.de",
-        "https://notyourcomputer.net",
+        "https://piped.kavin.rocks",
+        "https://piped.silkky.cloud",
+        "https://piped.tokhmi.xyz",
+        "https://piped.moomoo.me",
+        "https://piped.syncpundit.com",
+        "https://piped.mha.fi",
+        "https://piped.privacy.com.de",
         //invidious
         "https://yewtu.be",
         "https://vid.puffyan.us",
@@ -108,6 +105,7 @@ function getYoutubeAlts(){
         "https://invidious.se...ivacy.com",
         "https://inv.bp.projectsegfau.lt",
         "https://invidious.lunar.icu",
+        "https:/invidious.xamh.de",
     ];
 }  
 

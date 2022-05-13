@@ -3,16 +3,14 @@ document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
 
-    //LOAD video, twitter etc domain names here -- populate the drowdown
-    // const dropdownData = chrome.storage.local.get("popupDomains", (data) => {
-    //     //data.forEach(group => console.log(group))
-    //     console.log(JSON.stringify(data["popupDomains"]))
-    // })
-
     getDataFromStorage(chrome, "popupDomains")
         .then(data => {
 
-            const popupDomains = data["popupDomains"]
+            const popupDomains = data["popupDomains"];
+
+            //test
+            // const yt = popupDomains["youtubeAlts"];
+            // const tw = popupDomains["twitterAlts"];
 
             const youtubeDropdown = document.getElementById("youtube-dropdown");    
 
@@ -208,7 +206,7 @@ function extractPath(url, hostName){
 }
 
 function createStandinUrl(path, newDomain){
-    let standin = "https://";
+    let standin;// = "https://";
 
     standin += newDomain;
 
@@ -221,10 +219,14 @@ function populateDropdown(dropdown, uniqueDomains, id){
     const domainsWithoutDefault = uniqueDomains.filter(item => item !== defaultDomainName);
     if(domainsWithoutDefault.length){
         for(var i = 0; i < domainsWithoutDefault.length; i++){
+            let domainHandle = domainsWithoutDefault[i];
+            domainHandle = domainHandle.replace("https://", "");
+            domainHandle = domainHandle.replace("www.");
+
             const option = document.createElement("option");
             option.setAttribute("class", id);
-            option.setAttribute("value", domainsWithoutDefault[i]);
-            option.innerHTML = domainsWithoutDefault[i];
+            option.setAttribute("value", domainHandle);
+            option.innerHTML = domainHandle;
 
             dropdown.appendChild(option);
         }            
