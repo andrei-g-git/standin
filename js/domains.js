@@ -37,9 +37,57 @@ const initialDropdownData = {
 
 };
 
+const domainGroupProperties = {
+    domainGroupProperties: [
+        {
+            youtubeAlts: {
+                    dropdownId: "youtube-dropdown",
+                    dropdownLabel: "youtube" 
+        
+            }
+        },
+        {
+            twitterAlts: {
+                dropdownId: "twitter-dropdown",
+                dropdownLabel: "twitter"
+            }
+        },
+        {
+            redditAlts: {
+                dropdownId: "reddit-dropdown",
+                dropdownLabel: "reddit"
+            }
+        },
+        {
+            mediumAlts: {
+                dropdownId: "medium-dropdown",
+                dropdownLabel: "medium"
+            }
+        },
+        {
+            ticktockAlts: {
+                dropdownId: "ticktock-dropdown",
+                dropdownLabel: "ticktock"
+            }
+        }          
+    ]
+}
+
+const selectedStandins = {
+    selectedYoutubeStandin: "youtube.com",
+    selectedTwitterStandin: "twitter.com",
+    selectedRedditStandin: "reddit.com",
+    selectedMediumStandin: "medium.com",
+    selectedTicktockStandin: "ticktock.com"
+}
+
 storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
 
 storeDataOnInstall(initialDropdownData, chrome, "defaultPopupDomains");
+
+storeDataOnInstall(domainGroupProperties, chrome, "domainGroupProperties");
+
+storeDataOnInstall(selectedStandins, chrome, "selectedStandins");
 
 function storePossibleDomains(domainsObject, browser, key){
     getDataFromStorage(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)

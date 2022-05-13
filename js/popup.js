@@ -8,56 +8,63 @@ function init(){
 
             const popupDomains = data["popupDomains"];
 
-            //test
-            // const yt = popupDomains["youtubeAlts"];
-            // const tw = popupDomains["twitterAlts"];
+            let dropdownContainer = document.getElementById("dropdown-container");
 
-            const youtubeDropdown = document.getElementById("youtube-dropdown");    
+            populateDropdownContainer(
+                popupDomains,
+                domainGroupDropdownIdPairs,
+                document,
+                dropdownContainer,
+                createDropdownAndLabel,
+                createOption,
+                updateStorageOnChange
+            );
 
-            if(youtubeDropdown !== null && youtubeDropdown !== undefined){
 
-                populateDropdown(youtubeDropdown, /* videoDomainNames */popupDomains["youtubeAlts"], "youtube-dropdown");
+            // const youtubeDropdown = document.getElementById("youtube-dropdown");    
 
-                setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
-                    .then(() => {
-                        updateStorageOnChange(youtubeDropdown, "videoHost")
-                            .catch(err => console.error(err));
-                    })
-                    .catch(err => console.error(err));
+            // if(youtubeDropdown !== null && youtubeDropdown !== undefined){
 
-                //updateStorageOnChange(youtubeDropdown, "videoHost");
+            //     populateDropdown(youtubeDropdown, popupDomains["youtubeAlts"], "youtube-dropdown");
 
-            } else {
-                console.log("videos dropdown hasn't loaded into the document");
-            }
+            //     setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
+            //         .then(() => {
+            //             updateStorageOnChange(youtubeDropdown, "videoHost")
+            //                 .catch(err => console.error(err));
+            //         })
+            //         .catch(err => console.error(err));
+
+
+            // } else {
+            //     console.log("videos dropdown hasn't loaded into the document");
+            // }
 
             const switchVideoButton = document.getElementById("video-standin-button");
 
-            openStandinOnClick(switchVideoButton, "videoHost", /* videoDomainNames */popupDomains["youtubeAlts"]);
+            openStandinOnClick(switchVideoButton, "videoHost", popupDomains["youtubeAlts"]);
 
             ////////////////////////////////////////////////////
 
             const socialDropdown = document.getElementById("twitter-dropdown");
 
-            if(socialDropdown !== null && socialDropdown !== undefined){
-                populateDropdown(socialDropdown, /* socialDomainNames */popupDomains["twitterAlts"], "twitter-dropdown");
+            // if(socialDropdown !== null && socialDropdown !== undefined){
+            //     populateDropdown(socialDropdown, popupDomains["twitterAlts"], "twitter-dropdown");
 
-                setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
-                    .then(() => {
-                        updateStorageOnChange(socialDropdown, "socialHost")
-                            .catch(err => console.error(err));
-                    })
-                    .catch(err => console.error(err));
+            //     setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
+            //         .then(() => {
+            //             updateStorageOnChange(socialDropdown, "socialHost")
+            //                 .catch(err => console.error(err));
+            //         })
+            //         .catch(err => console.error(err));
 
-                //updateStorageOnChange(socialDropdown, "socialHost");
 
-            } else {
-                console.log("microblogging dropdown hasn't loaded into the document");
-            }
+            // } else {
+            //     console.log("microblogging dropdown hasn't loaded into the document");
+            // }
 
             const switchSocialButton = document.getElementById("social-standin-button");
 
-            openStandinOnClick(switchSocialButton, "socialHost", /* socialDomainNames */popupDomains["twitterAlts"]);
+            openStandinOnClick(switchSocialButton, "socialHost", popupDomains["twitterAlts"]);
 
 
         }) //#################################################### for >>>   .then(data => {
@@ -121,55 +128,84 @@ function updateStorageOnChange(dropdown, key){  //on fresh install this promise 
     });  
 }
 
-const videoDomainNames = [   
-    "youtube.com",
-    "yewtu.be",
-    "invidio.xamh.de",
-    "piped.kavin.rocks",
-    "youtu.be"      
-];
+const domainGroupDropdownIdPairs = [   
+    {youtubeAlts: "youtube-dropdown"},
+    {twitterAlts: "twitter-dropdown"},
+    {redditAlts: "reddit-dropdown"},
+    {mediumAlts: "medium-dropdown"},
+    {ticktockAlts: "ticktock-dropdown"}
+]
 
-const socialDomainNames = [
-    "twitter.com",
-    "nitter.net",
-    "mobile.twitter.com"
-];
 
-const allValidDomains = [
-    //piped
-    "https://kavin.rocks",
-    "https://silkky.cloud",
-    "https://tokhmi.xyz",
-    "https://moomoo.me",
-    "https://il.ax",
-    "https://syncpundit.com",
-    "https://mha.fi",
-    "https://mint.lgbt",
-    "https://privacy.com.de",
-    "https://notyourcomputer.net",
-    //invidious
-    "https://yewtu.be",
-    "https://vid.puffyan.us",
-    "https://invidious.snopyta.org",
-    "https://invidious.kavin.rocks",
-    "https://inv.riverside.rocks",
-    "https://invidious.osi.kr",
-    "https://y.com.sb",
-    "https://tube.cthd.icu",
-    "https://invidious.flokinet.to",
-    "https://yt.artemislena.eu",
-    "https://invidious.se...ivacy.com",
-    "https://inv.bp.projectsegfau.lt",
-    "https://invidious.lunar.icu",
-    //nitter
-    "https://nitter.net",
-    //reddit
-    "https://teddit.net/",
-    //medium
-    "https://scribe.rip/",
-    //ticktock ... god forgive me for I have enabled cancer
-    "https://proxitok.herokuapp.com/", 
-];
+function populateDropdownContainer(
+    popupDomains,
+    domainGroupDropdownIdPairs,
+    doc,
+    dropdownContainer,
+    createDropdownAndLabelCallback,
+    createOptionCallback,
+    updateStorageOnChangeCallback
+){
+    domainGroupDropdownIdPairs.forEach(groupAndId => {
+        const [groupName, dropdownId] = Object.entries(groupAndId)[0];
+        const domains = popupDomains[groupName];
+
+        console.log(`---GROUP NAME: ${groupName} \n ---DROPDOWN ID: ${dropdownId} \n ---DOMAINS: ${JSON.stringify(domains)}`);
+
+        //should get the dropdown name instead of using the "somethingAlt" format
+        let dropdownAndLabel = createDropdownAndLabelCallback(dropdownId, groupName, domains, doc, createOptionCallback, updateStorageOnChangeCallback);
+
+        dropdownContainer.appendChild(dropdownAndLabel);
+    }); 
+}
+
+function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChange){
+    let label = doc.createElement("label");
+    label.setAttribute("class", "dropdown-label");
+    label.setAttribute("for", id);
+    label.innerHTML = name;
+
+    let dropdown = doc.createElement("select");
+    dropdown.setAttribute("id", id);
+    dropdown.setAttribute("class", "dropdown");
+    
+    //DELETE AND PASS PROPER STANDIN KEY
+    //and pass actual dropdown name instead if "whateverAlt"
+    const deleteThis = {
+        youtubeAlts: "selectedYoutubeStandin",
+        twitterAlts: "selectedTwitterStandin",
+        redditAlts: "selectedRedditStandin",
+        mediumAlts: "selectedMediumStandin",
+        ticktockAlts: "selectedTicktockStandin",
+    }
+    updateStorageOnChange(dropdown, deleteThis[name]) ////////////////////////////////////
+
+    domains.forEach(domain => {
+        let domainName = domain
+            .replace("https://", "")
+            .replace("www.", "");
+
+        let option = createOption(domainName, doc);
+
+        dropdown.appendChild(option);
+    });
+
+    let dropdownAndLabel = doc.createElement("div");
+    dropdownAndLabel.setAttribute("class", "dropdown-and-label");
+    dropdownAndLabel.appendChild(label);
+    dropdownAndLabel.appendChild(dropdown);
+
+    return dropdownAndLabel;
+}
+
+function createOption(value, doc){
+    let option = doc.createElement("option");
+    option.setAttribute("class", "dropdown-option");
+    option.setAttribute("value", value);
+    option.innerHTML = value;
+
+    return option;
+}
 
 function checkForValidUrl(url){
     if(url && url.length){

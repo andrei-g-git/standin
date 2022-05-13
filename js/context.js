@@ -101,9 +101,9 @@ function openStandinlink(domain, path, browser, event){
 }
 
 async function loadStandinDomainName(sourceDomain, browser){
-    let key = "videoHost";
+    let key = "selectedYoutubeStandin";//"videoHost";
     if(sourceDomain.includes("twitter") || sourceDomain.includes("nitter")){
-        key = "socialHost";
+        key = "selectedYoutubeStandin";//"socialHost";
     }
 
     let domain;
