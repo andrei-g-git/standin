@@ -1,4 +1,8 @@
 
+sayCheese();
+sayCheese();
+sayCheese();
+
 document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
@@ -20,54 +24,21 @@ function init(){
                 updateStorageOnChange
             );
 
-
-            // const youtubeDropdown = document.getElementById("youtube-dropdown");    
-
-            // if(youtubeDropdown !== null && youtubeDropdown !== undefined){
-
-            //     populateDropdown(youtubeDropdown, popupDomains["youtubeAlts"], "youtube-dropdown");
-
-            //     setDefaultStandinDomain(youtubeDropdown, "videoHost", "youtube.com")
-            //         .then(() => {
-            //             updateStorageOnChange(youtubeDropdown, "videoHost")
-            //                 .catch(err => console.error(err));
-            //         })
-            //         .catch(err => console.error(err));
-
-
-            // } else {
-            //     console.log("videos dropdown hasn't loaded into the document");
-            // }
-
             const switchVideoButton = document.getElementById("video-standin-button");
 
             openStandinOnClick(switchVideoButton, "videoHost", popupDomains["youtubeAlts"]);
 
             ////////////////////////////////////////////////////
 
-            const socialDropdown = document.getElementById("twitter-dropdown");
-
-            // if(socialDropdown !== null && socialDropdown !== undefined){
-            //     populateDropdown(socialDropdown, popupDomains["twitterAlts"], "twitter-dropdown");
-
-            //     setDefaultStandinDomain(socialDropdown, "socialHost", "twitter.com")
-            //         .then(() => {
-            //             updateStorageOnChange(socialDropdown, "socialHost")
-            //                 .catch(err => console.error(err));
-            //         })
-            //         .catch(err => console.error(err));
-
-
-            // } else {
-            //     console.log("microblogging dropdown hasn't loaded into the document");
-            // }
 
             const switchSocialButton = document.getElementById("social-standin-button");
 
             openStandinOnClick(switchSocialButton, "socialHost", popupDomains["twitterAlts"]);
 
+            ////////////////////// replace with this
+            //populateSwitchButtonContainer(buttonContainer, deleteThis, popupDomains, chrome);       
 
-        }) //#################################################### for >>>   .then(data => {
+        }); 
 
 
     //test
@@ -80,6 +51,20 @@ function init(){
 
 }
 
+function populateSwitchButtonContainer(buttonContainer, groupAndStandinPairs, popupDomains, browser, doc){
+    for(let i = 0; i < groupAndStandinPairs.length; i++){
+        const domainHandle = groupAndStandinPairs[i].getTheThingHere11111111111111111111111111111111111
+    }
+}
+
+function createSwitchButton(doc, domainHandle){
+    let button = doc.createElement("button");
+    button.setAttribute("class", "switch-site-button");
+    button.innerHTML = "Switch " + domainHandle + " host";
+
+    return button;
+}
+
 async function getDataFromStorage(browser, ...keys){
     return new Promise((resolve, reject) => {
         browser.storage.local.get([...keys], function(data){
@@ -90,7 +75,7 @@ async function getDataFromStorage(browser, ...keys){
 
 async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
     return new Promise((resolve, reject) => {                              
-        /* await */ chrome.storage.local.get([key], function(data){
+        chrome.storage.local.get([key], function(data){
             if(! data[key] || ! data[key].length){
                 chrome.storage.local.set({ [key]: defaultDomain});
                 dropdown.value = defaultDomain;
@@ -109,7 +94,7 @@ async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh
 function updateStorageOnChange(dropdown, key){  //on fresh install this promise might fail 
     dropdown.addEventListener("change", async function(event){
         return new Promise((resolve, reject) => {
-            /* await */ chrome.storage.local.get([key], function(data){
+            chrome.storage.local.get([key], function(data){
 
                 const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
 
@@ -133,7 +118,7 @@ const domainGroupDropdownIdPairs = [
     {twitterAlts: "twitter-dropdown"},
     {redditAlts: "reddit-dropdown"},
     {mediumAlts: "medium-dropdown"},
-    {ticktockAlts: "ticktock-dropdown"}
+    {tiktokAlts: "tiktok-dropdown"}
 ]
 
 
@@ -176,7 +161,7 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
         twitterAlts: "selectedTwitterStandin",
         redditAlts: "selectedRedditStandin",
         mediumAlts: "selectedMediumStandin",
-        ticktockAlts: "selectedTicktockStandin",
+        tiktokAlts: "selectedTiktokStandin",
     }
     updateStorageOnChange(dropdown, deleteThis[name]) ////////////////////////////////////
 

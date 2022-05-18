@@ -3,7 +3,7 @@ const contextMenuItem = {
     "title": "Standin",
     "contexts": ["all"]
 };
-let browser = chrome; //doesn't support promisses
+let browser = chrome; //doesn't support promisses   ---- or does it...
 
 browser
     .contextMenus
@@ -12,40 +12,39 @@ browser
 browser
     .contextMenus
     .onClicked
-    .addListener((event) => handleContextClick(event, browser, domainList));
+    .addListener((event) => handleContextClick(event, browser, getDomainNames, "domains"));
 
-function handleContextClick(event, browser, domainList){ //apparently I can't name the domainList argument the same as this domains parameter here ... error:  redeclaration of formal parameter ...weird
+function handleContextClick(event, browser, getDomainNames, domainsKey){ 
 
+    getDomainNames(browser, domainsKey)
+        .then(domainList => {
+            const validDomain = validateClickedLink(event.linkUrl, domainList);
 
-    const validDomain = validateClickedLink(event.linkUrl, domainList);
+            const path = extractUrlPath(event.linkUrl, validDomain);
 
-    const path = extractUrlPath(event.linkUrl, validDomain);
+            loadStandinDomainName(validDomain, "selectedStandins", "popupDomainsReplacer", browser)
+                .then((domain) => {
+                    openStandinlink(domain, path, browser, event);
+                });
+        });
 
-    loadStandinDomainName(validDomain, browser)
-        .then((domain) => {
-            openStandinlink(domain, path, browser, event);
-        })
 
 }    
 
-const domainList = [
-    // "https://youtube.com",
-    // "https://youtu.be",
-    // "https://yewtu.be",
-    // "https://invidio.xamh.de",
-    // "https://piped.kavin.rocks",
-    // "https://twitter.com",
-    // "https://nitter.net",
-    // "https://mobile.twitter.com"
-    "youtube.com",
-    "youtu.be",
-    "yewtu.be",
-    "invidio.xamh.de",
-    "piped.kavin.rocks",
-    "twitter.com",
-    "nitter.net",
-    "mobile.twitter.com"    
-];
+
+async function getDomainNames(browser, domainsKey){
+    return new Promise((resolve, reject) => {
+        getDataFromStorage(browser, domainsKey)
+            .then(data => {
+                let urls = data[domainsKey];
+                if(! urls || ! urls.length) reject();
+                const domainList = urls.map(url => url.replace("https://", ""));
+                resolve(domainList);
+            });
+    });
+
+} 
+
 
 function onError(error){
     console.log(error);
@@ -54,9 +53,8 @@ function onError(error){
 function validateClickedLink(url, domainList){
     let validDomain;
     if(url && url.length){
-        //let withoutWWW = url.replace("www.", ""); 
         for(let i = 0; i < domainList.length; i++){
-            if(/* withoutWWW */url.includes(domainList[i])){
+            if(url.includes(domainList[i])){
                 validDomain = domainList[i];
                 break
             }
@@ -71,7 +69,7 @@ function validateClickedLink(url, domainList){
 function extractUrlPath(url, validDomain){
     let path;
     if(validDomain){
-        const withoutProtocol = validDomain;//.replace("https://", "");
+        const withoutProtocol = validDomain;
         const pathIndex = url.indexOf(withoutProtocol) + withoutProtocol.length; //this should start before the "/"
         path = url.substring(pathIndex);
         console.log(path)
@@ -100,17 +98,46 @@ function openStandinlink(domain, path, browser, event){
     }
 }
 
-async function loadStandinDomainName(sourceDomain, browser){
-    let key = "selectedYoutubeStandin";//"videoHost";
-    if(sourceDomain.includes("twitter") || sourceDomain.includes("nitter")){
-        key = "selectedYoutubeStandin";//"socialHost";
-    }
+async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, browser){
+    // let key = "selectedYoutubeStandin"; //this is rigid and clunky, obviously I'll have to replace it
+    // if(sourceDomain.includes("twitter") || sourceDomain.includes("nitter")){
+    //     key = "selectedTwitterStandin";
+    // }
+    // if(sourceDomain.includes("reddit") || sourceDomain.includes("teddit")){
+    //     key = "selectedRedditStandin";
+    // }   
+    // if(sourceDomain.includes("medium") || sourceDomain.includes("scribe")){
+    //     key = "selectedMediumStandin";
+    // }        
+    // if(sourceDomain.includes("tiktok") || sourceDomain.includes("proxitok")){
+    //     key = "selectedTiktokStandin";
+    // } 
+    
 
     let domain;
 
     return new Promise((resolve, reject) => {
-        browser.storage.local.get([key], function(data){
-            const storedHostName = data[key];
+        browser.storage.local.get([selectedKey, domainsKey], function(data){
+
+            //new
+            //const selectedStandins = data[key];
+            const popupDomains = data[domainsKey];
+            const selectedStandins = data[selectedKey];
+            let handle;
+            for(let i = 0; i < popupDomains.length; i++){
+                const group = popupDomains[i].group;
+                const domains = popupDomains[i].domains;
+                for(let j = 0; j < domains.length; j++){
+                    if(domains[j].includes(sourceDomain)){
+                        handle = group;
+                        break;
+                    }
+                }
+            }
+            //
+            const storedHostName = selectedStandins
+                .filter(object => object.handle === handle)[0]
+                .standin;
 
             if(storedHostName){
                 domain = "https://";
@@ -128,8 +155,10 @@ async function loadStandinDomainName(sourceDomain, browser){
     });
 }
 
-async function testWrapper(validDomain, browser, path, event, callback){ //don't need, can use then()
-    let standinDomain = await callback(validDomain, browser)
-
-    openStandinlink(standinDomain, path, browser, event);
+async function getDataFromStorage(browser, ...keys){
+    return new Promise((resolve, reject) => {
+        browser.storage.local.get([...keys], function(data){
+            resolve(data);
+        });
+    });
 }

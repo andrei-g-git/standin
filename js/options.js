@@ -7,7 +7,7 @@ function init(){
         "twitterAlts",
         "redditAlts",
         "mediumAlts",
-        "ticktockAlts" 
+        "tiktokAlts" 
     ];
     let checkboxContainer = document.getElementById("checkbox-container");
 

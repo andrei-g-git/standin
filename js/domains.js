@@ -18,20 +18,25 @@ const domainsObject = {
 const initialDropdownData = {
     popupDomains: {
         youtubeAlts: [
+            "https://youtube.com",
             "https://piped.kavin.rocks",
             "https://yewtu.be",
         ],
         twitterAlts: [
+            "https://twitter.com",
             "https://nitter.net",
         ],
         redditAlts: [
-
+            "https://reddit.com",
+            "https://teddit.net"
         ],
         mediumAlts: [
-
+            "https://medium.com",
+            "https://scribe.rip"
         ],
-        ticktockAlts: [
-
+        tiktokAlts: [
+            "https://tiktok.com",
+            "https://proxitok.herokuapp.com"
         ]        
     }
 
@@ -67,7 +72,7 @@ const domainGroupProperties = {
         {
             ticktockAlts: {
                 dropdownId: "ticktock-dropdown",
-                dropdownLabel: "ticktock"
+                dropdownLabel: "tiktok"
             }
         }          
     ]
@@ -78,20 +83,50 @@ const selectedStandins = {
     selectedTwitterStandin: "twitter.com",
     selectedRedditStandin: "reddit.com",
     selectedMediumStandin: "medium.com",
-    selectedTicktockStandin: "ticktock.com"
-}
+    selectedTiktokStandin: "tiktok.com"
+};
+
+const allSelected = {
+    selectedStandins: [
+        {
+            standin: "youtube.com", 
+            handle: "youtube" //these are constant
+        },
+        {
+            standin: "twitter.com",
+            handle: "twitter"
+        },
+        {
+            standin: "reddit.com",
+            handle: "reddit"
+        },
+        {
+            standin: "medium.com",
+            handle: "medium"
+        },
+        {
+            standin: "tiktok.com",
+            handle: "tiktok"
+        },                                
+    ]
+};
 
 storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
+//replace with
+storeDataToStorage(chrome, getPopupDomains());
 
 storeDataOnInstall(initialDropdownData, chrome, "defaultPopupDomains");
 
 storeDataOnInstall(domainGroupProperties, chrome, "domainGroupProperties");
 
-storeDataOnInstall(selectedStandins, chrome, "selectedStandins");
+storeDataOnInstall(selectedStandins, chrome, /* "selectedStandins" */ "doesn't matter");
+
+//storeDataOnInstall is useless, don't need to check if data already exists, it won't
+storeDataToStorage(chrome, allSelected);
 
 function storePossibleDomains(domainsObject, browser, key){
     getDataFromStorage(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)
-        .then((data) => {
+        .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES
             if( ! data || ! data[key]){
                 storeDataToStorage(browser, domainsObject);
             }
@@ -129,8 +164,77 @@ async function storeDataToStorage(browser, data){
     });
 }
 
+function getPopupDomains(){
+    const popupDomainsReplacer = [ //replace popup domains with this
+        {
+            group: "youtube",
+            domains: [
+                "https://youtube.com",
+                //piped
+                "https://piped.kavin.rocks",
+                "https://piped.silkky.cloud",
+                "https://piped.tokhmi.xyz",
+                "https://piped.moomoo.me",
+                "https://piped.syncpundit.com",
+                "https://piped.mha.fi",
+                "https://piped.privacy.com.de",
+                //invidious
+                "https://yewtu.be",
+                "https://vid.puffyan.us",
+                "https://invidious.snopyta.org",
+                "https://invidious.kavin.rocks",
+                "https://inv.riverside.rocks",
+                "https://invidious.osi.kr",
+                "https://y.com.sb",
+                "https://tube.cthd.icu",
+                "https://invidious.flokinet.to",
+                "https://yt.artemislena.eu",
+                "https://invidious.se...ivacy.com",
+                "https://inv.bp.projectsegfau.lt",
+                "https://invidious.lunar.icu",
+                "https:/invidious.xamh.de",
+            ]
+        },
+        {
+            group: "twitter",
+            domains: [
+                "https://twitter.com",
+                //nitter
+                "https://nitter.net",
+            ]
+        },
+        {
+            group: "reddit",
+            domains: [
+                "https://reddit.com",
+                //reddit
+                "https://teddit.net/",
+            ]
+        },
+        {
+            group: "medium",
+            domains: [
+                "https://medium.com",
+                //medium
+                "https://scribe.rip/",
+            ]
+        },
+        {
+            group: "tiktok",
+            domains: [
+                "https://tiktok.com",
+                //ticktock ... god forgive me for I have enabled cancer
+                "https://proxitok.herokuapp.com/", 
+            ]
+        }                
+    ];
+
+    return {popupDomainsReplacer: popupDomainsReplacer};
+}
+
 function getYoutubeAlts(){
     return [
+        "https://youtube.com",
         //piped
         "https://piped.kavin.rocks",
         "https://piped.silkky.cloud",
@@ -159,6 +263,7 @@ function getYoutubeAlts(){
 
 function getTwitterAlts(){
     return [
+        "https://twitter.com",
         //nitter
         "https://nitter.net",
     ];   
@@ -167,6 +272,7 @@ function getTwitterAlts(){
 
 function getRedditAlts(){
     return [
+        "https://reddit.com",
         //reddit
         "https://teddit.net/",
     ];    
@@ -175,6 +281,7 @@ function getRedditAlts(){
 
 function getMediumAlts(){
     return [
+        "https://medium.com",
         //medium
         "https://scribe.rip/",
     ];    
@@ -183,6 +290,7 @@ function getMediumAlts(){
 
 function getTicktockAlts(){
     return [
+        "https://tiktok.com",
         //ticktock ... god forgive me for I have enabled cancer
         "https://proxitok.herokuapp.com/", 
     ];

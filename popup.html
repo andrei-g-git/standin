@@ -9,8 +9,7 @@
 
         <link href="css/popup.css" rel="stylesheet">
 
-        <scrit src="js/domains.js"></scrit>
-
+        <script src="js/testFunctions.js"></script> <!-- ok so I don't need to export and import shit, I can just call functions from scripts above inside scripts below... although this won't work for a script that's purely a background script since it won't be linked -->
         <script src="js/popup.js"></script>
     </head>
 
@@ -19,34 +18,7 @@
             <div id="dropdown-container"
                 class="dropdown-container"
             >
-
-                <!-- YOUTUBE -->
-<!--                 <select id="youtube-dropdown" 
-                    class="dropdown"
-                >
-
-                    <option class="dropdown-option"
-                        value="youtube.com"
-                    >
-                        youtube.com
-                    </option> 
-                
-                </select> -->
-
-                <!-- TWITTER -->
-<!--                 <select id="twitter-dropdown"
-                    class="dropdown"
-                >
-
-                    <option class="dropdown-option"
-                        value="twitter.com"
-                        selected
-                    >
-                        twitter.com
-                    </option>
-
-                </select> -->
-
+                <!-- dynamically generated -->
             </div>
 
             <div class="standin-button-container">
