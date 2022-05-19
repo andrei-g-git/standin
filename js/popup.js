@@ -29,19 +29,20 @@ function init(){
                 setSelectedOptions
             );
 
-            const switchVideoButton = document.getElementById("video-standin-button").getElementsByTagName("button")[0];
+            // const switchVideoButton = document.getElementById("video-standin-button").getElementsByTagName("button")[0];
 
-            openStandinOnClick(switchVideoButton, "videoHost", /* popupDomains["youtubeAlts"] */popupDomains[0]);
+            // openStandinOnClick(switchVideoButton, "videoHost", /* popupDomains["youtubeAlts"] */popupDomains[0]);
 
-            ////////////////////////////////////////////////////
+            // ////////////////////////////////////////////////////
 
 
-            const switchSocialButton = document.getElementById("social-standin-button");
+            // const switchSocialButton = document.getElementById("social-standin-button");
 
-            openStandinOnClick(switchSocialButton, "socialHost", /* popupDomains["twitterAlts"] */popupDomains[1]);
+            // openStandinOnClick(switchSocialButton, "socialHost", /* popupDomains["twitterAlts"] */popupDomains[1]);
 
             ////////////////////// replace with this
-            //populateSwitchButtonContainer(buttonContainer, deleteThis, popupDomains, chrome);       
+            let buttonContainer = document.getElementById("standin-button-container");
+            populateSwitchButtonContainer(buttonContainer, "selectedStandins", popupDomains, chrome, document);       
 
         }); 
 
@@ -56,18 +57,83 @@ function init(){
 
 }
 
-function populateSwitchButtonContainer(buttonContainer, groupAndStandinPairs, popupDomains, browser, doc){
-    for(let i = 0; i < groupAndStandinPairs.length; i++){
-        const domainHandle = groupAndStandinPairs[i].getTheThingHere11111111111111111111111111111111111
+function populateSwitchButtonContainer(buttonContainer, selectedStandinsKey, popupDomains/* might not need */, browser, doc){
+    if(buttonContainer){
+        browser.storage.local.get([selectedStandinsKey], function(data){
+            const selectedStandins = data[selectedStandinsKey];
+            console.log(JSON.stringify(selectedStandins));
+
+            for(let i = 0; i < selectedStandins.length; i++){
+                const standin = selectedStandins[i].standin;
+                const groupName = selectedStandins[i].handle;
+                const domains = popupDomains[i].domains; //assume that the standin and popupDomain arrays are 1:1, probably a bad idea...
+
+                let buttonWrapper = createSwitchButton(doc, groupName); //I should pass these as callbacks
+                let button = buttonWrapper.getElementsByTagName("button")[0];
+                buttonContainer.appendChild(buttonWrapper);
+
+                button.addEventListener("click", function(event){
+                    const abc = 123;
+                    /* const newUrl =  */createStandinUrl(browser, groupName, standin, domains)
+                        .then(newUrl => {
+                            if(newUrl){
+                                browser
+                                .tabs
+                                .create({
+                                    url: newUrl
+                                }) 
+                            }
+                        })
+
+                });
+            }
+        });        
+    } else {
+        console.log("the standin button container has not yet loaded into the document")
     }
 }
 
-function createSwitchButton(doc, domainHandle){
+function createSwitchButton(doc, groupName){
+    let buttonWrapper = doc.createElement("div");
+    buttonWrapper.setAttribute("class", "switch-site-button");
+    buttonWrapper.setAttribute("id", groupName + "-standin-button");
+    let icon = doc.createElement("img");
+    icon.setAttribute("src", `assets/${groupName}Standin.png`);
+    icon.setAttribute("alt", "btn");
     let button = doc.createElement("button");
-    button.setAttribute("class", "switch-site-button");
-    button.innerHTML = "Switch " + domainHandle + " host";
 
-    return button;
+    buttonWrapper.appendChild(icon);
+    buttonWrapper.appendChild(button);
+
+    return buttonWrapper;
+}
+
+async function createStandinUrl(browser, groupName, standin, domains){
+    return new Promise(resolve => {
+        browser.tabs.query({active: true, currentWindow: true}, (allTabs) => {
+            const url = allTabs[0].url;
+            const protocol = url.slice(0, 8);
+            console.log("PROTOCOL      " + protocol); /////////
+            if(protocol === "https://"){
+                const withoutProtocol = url.replace(protocol, "");
+                const slashPos = withoutProtocol.indexOf("/");
+                const domainName = withoutProtocol.slice(0, slashPos);
+                console.log("WITHoutPR:  " + withoutProtocol + "    slash     " + slashPos + "     " + domainName);
+                if(domainName && domainName.length){
+                    const validDomains = domains.filter(domain => domain.includes(domainName));
+                    if(validDomains.length){
+                        const path = withoutProtocol.slice(slashPos);
+                        console.log(path);
+                        const fullStandinUrl = "https://" + standin + path;
+                        console.log("st + path:    " + standin + "    " + path);
+                        //return fullStandinUrl;   
+                        resolve(fullStandinUrl);                 
+                    }
+
+                } 
+            } 
+        });
+    });
 }
 
 async function getDataFromStorage(browser, ...keys){
@@ -103,32 +169,18 @@ function updateStorageOnChange(dropdown, key, groupHandle){  //on fresh install 
                 let abc = 123;
                 const blargh = data.selectedStandins
                 const selectedStandins = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
-                abc = 234;
-                 console.log("got selected standins      " + JSON.stringify(selectedStandins));
-                // console.log("stored video domain is:     " + data[key]);
-                // console.log("event target value:   " + event.target.value )
+
                 for(let i = 0; i < selectedStandins.length; i++){
                     console.log(selectedStandins[i].standin)
                     if(selectedStandins[i].handle === groupHandle){
                         selectedStandins[i].standin = event.target.value;
                     }
                 }
-                console.log("NEW SELECTED STANDINS      " + JSON.stringify(selectedStandins));
-                //if( ! data[key]) reject(); //shouldn't this go before resolve()?
 
                 chrome.storage.local.set(/* { [key]: event.target.value} */{selectedStandins: selectedStandins}, function(data){
-                    console.log("SET SELECTED STANDIN DATA      " + JSON.stringify(data));
-
 
                     resolve(data[key]);    
                 })
-
-                // console.log("NEW SELECTED STANDINS      " + JSON.stringify(selectedStandins));
-
-
-                // resolve(data[key]);
-
-                
             });
 
             
@@ -162,8 +214,6 @@ function populateDropdownContainer(
         // const domains = popupDomains[groupName];
         const domains = popupDomains[index];
         const dropdownId = groupName + "-dropdown";
-
-        console.log(`---GROUP NAME: ${groupName} \n ---DROPDOWN ID: ${dropdownId} \n ---DOMAINS: ${JSON.stringify(domains)}`);
 
         //should get the dropdown name instead of using the "somethingAlt" format
         let dropdownAndLabel = createDropdownAndLabelCallback(dropdownId, groupName, domains, doc, createOptionCallback, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser);
@@ -232,9 +282,7 @@ function setSelectedOptions(key, domainHandle, dropdown, browser){
                 for(let i = 0; i < optionsArray.length; i++){
                     const option = optionsArray[i];
                     if(option.innerHTML.includes(standin)){
-                        dropdown.selectedIndex = i;
-                        console.log("444444: " + dropdown.selectedIndex + "      " + i)
-                        
+                        dropdown.selectedIndex = i;  
                     }
                 }
             }
@@ -276,14 +324,14 @@ function extractPath(url, hostName){
     return url.substring(pathStart);
 }
 
-function createStandinUrl(path, newDomain){
-    let standin;// = "https://";
+// function createStandinUrl(path, newDomain){
+//     let standin;// = "https://";
 
-    standin += newDomain;
+//     standin += newDomain;
 
-    standin += "/" + path;
-    return standin;
-}
+//     standin += "/" + path;
+//     return standin;
+// }
 
 function populateDropdown(dropdown, uniqueDomains, id){ //not using?
     const defaultDomainName = dropdown.options[0].value;
