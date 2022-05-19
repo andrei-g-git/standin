@@ -1,24 +1,41 @@
+:root{
+    --primary-bluer: #59d5d4;
+    --primary-greener: #d5d65e;
+    --primary-warmer: #D6B1D6;
+    --opacity: .23;
+}
+
 .main-container{
-    background-color: aquamarine;
+    /* background-color: aquamarine; */
 
     /* width: 150px; */
 
-    padding: 0 3px; 
+    /* padding: 0 3px;  */
+
+
+   /*  background: url(assets/open-pink-64.png) no-repeat right white; */
+   /* background: url(http://www.clker.com/cliparts/M/h/m/S/a/O/shaded-red-apple-th.png) no-repeat left transparent; */ /* so this works... */
+   /* background: url(assets/open-pink-64.png) no-repeat left transparent; */ /* but not this... */
+}
+
+.options-gear{
+    width: 16px;
+    height: 16px;
+    /* background: url(https://www.iconsdb.com/icons/preview/pink/cog-xxl.png) no-repeat left transparent;
+    background-size: contain; */
 }
 
 .dropdown-container{
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-
-    /* background-color: aquamarine; */
+    align-items: "center";
 
     height: auto;
     min-height: 100px;
 }
 
 .standin-button-container{
-    display: flex;
+    display: flex; /* this is going to be a grid */
     flex-direction: column;
     align-items: center;
 
@@ -27,11 +44,57 @@
 }
 
 .dropdown{
-    margin: 10px 0;
+    -moz-appearance: none; 
+    -webkit-appearance: none; 
+    appearance: none;
+
+    border: none;
+    background-color: unset;
+    /* background: transparent; */
+    outline: none;
+
+    color: var(--primary-warmer);
+
+    /* border-bottom: 4px solid pink;
+
+    background-image: url(assets/open-pink-64.png);
+    background-repeat: no-repeat;
+    background-position-x: 100%;
+    background-position-y: 5px; */
+}
+
+.dropdown-and-label{ /* should rename class, not using labels anymore */
+    width: 100px;
+    height: 20px;
+    overflow: hidden;
+    /* background: url(assets/open-pink-64.png) no-repeat right transparent; */
+
+    border-bottom: 3px solid var(--primary-bluer);
+}
+
+.dropdown-option{
+    color: var(--primary-warmer);
 }
 
 .switch-site-button{
-    margin: 10px 0;
+    position: relative;
+    width: 32px;
+    height: 32px;
+}
+
+.switch-site-button img {
+    width: 100%;
+    height: auto;
+}
+
+.switch-site-button button{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
 }
 
 @media(max-width: 480px){ /* don't nest when using plain css */

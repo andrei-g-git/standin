@@ -1,3 +1,5 @@
+//need to replace "popupDomains" and the selectedStanddin host keys
+
 document.addEventListener("DOMContentLoaded", init);
 
 function init(){
@@ -12,7 +14,7 @@ function init(){
     let checkboxContainer = document.getElementById("checkbox-container");
 
     if(checkboxContainer){ 
-        getDataFromStorage(chrome, ...domainKeys)
+        getDataFromStorage3(chrome, ...domainKeys)
             .then(domainGroups => {
                 if(Object.keys(domainGroups).length){
 
@@ -111,7 +113,7 @@ function handleCheckbox(checkboxAndLabel){
 
         console.log(groupLabel.innerHTML);
 
-        getDataFromStorage(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
+        getDataFromStorage3(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
             .then(data => {
                 let popupDomains = data["popupDomains"];
 
@@ -146,7 +148,7 @@ function handleAllCheckboxGroups(doc, className, handleCheckboxCallback){
     }
 }
 
-async function getDataFromStorage(browser, ...keys){
+async function getDataFromStorage3(browser, ...keys){
     return new Promise((resolve, reject) => {
         browser.storage.local.get([...keys], function(data){
             resolve(data);

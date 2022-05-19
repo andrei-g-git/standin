@@ -1,3 +1,4 @@
+
 const allDomains = mergeAllDomains(
     getYoutubeAlts(),
     getTwitterAlts(),
@@ -125,7 +126,7 @@ storeDataOnInstall(selectedStandins, chrome, /* "selectedStandins" */ "doesn't m
 storeDataToStorage(chrome, allSelected);
 
 function storePossibleDomains(domainsObject, browser, key){
-    getDataFromStorage(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)
+    getDataFromStorage2(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)
         .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES
             if( ! data || ! data[key]){
                 storeDataToStorage(browser, domainsObject);
@@ -134,7 +135,7 @@ function storePossibleDomains(domainsObject, browser, key){
 }
 
 function storeDataOnInstall(initialData, browser, key){ //use this instead, 
-    getDataFromStorage(browser, key)   
+    getDataFromStorage2(browser, key)   
     .then((data) => {
         if( ! data || ! data[key]){
             storeDataToStorage(browser, initialData);
@@ -148,7 +149,7 @@ function mergeAllDomains(...args){
     return allDomains;
 }
 
-async function getDataFromStorage(browser, ...keys){
+async function getDataFromStorage2(browser, ...keys){  //I think these get bunched up in one big script, it seems like they become duplicates 
     return new Promise((resolve, reject) => {
         browser.storage.local.get([...keys], function(data){
             resolve(data);

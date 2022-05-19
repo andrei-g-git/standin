@@ -1,39 +1,44 @@
 
-sayCheese();
-sayCheese();
-sayCheese();
-
 document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
 
-    getDataFromStorage(chrome, "popupDomains")
+    const abc = ["popupDomains", "popupDomainsReplacer"];
+    const def = 123;
+    getDataFromStorage(chrome, "popupDomainsReplacer")
         .then(data => {
 
-            const popupDomains = data["popupDomains"];
+            //const popupDomains = data["popupDomains"];
+            const popupDomains/* Replacer */ = data["popupDomainsReplacer"];
+            const justDomainGroupArrays = popupDomains/* Replacer */.map(group => group.domains);
+            const justGroupNames = popupDomains/* Replacer */.map(group => group.group);
 
             let dropdownContainer = document.getElementById("dropdown-container");
 
             populateDropdownContainer(
-                popupDomains,
-                domainGroupDropdownIdPairs,
+                //popupDomainsReplacer,
+                justDomainGroupArrays,
+                //domainGroupDropdownIdPairs, //start here
+                justGroupNames, //loop this and make dropdown ids with it
                 document,
                 dropdownContainer,
+                chrome,
                 createDropdownAndLabel,
                 createOption,
-                updateStorageOnChange
+                updateStorageOnChange,
+                setSelectedOptions
             );
 
-            const switchVideoButton = document.getElementById("video-standin-button");
+            const switchVideoButton = document.getElementById("video-standin-button").getElementsByTagName("button")[0];
 
-            openStandinOnClick(switchVideoButton, "videoHost", popupDomains["youtubeAlts"]);
+            openStandinOnClick(switchVideoButton, "videoHost", /* popupDomains["youtubeAlts"] */popupDomains[0]);
 
             ////////////////////////////////////////////////////
 
 
             const switchSocialButton = document.getElementById("social-standin-button");
 
-            openStandinOnClick(switchSocialButton, "socialHost", popupDomains["twitterAlts"]);
+            openStandinOnClick(switchSocialButton, "socialHost", /* popupDomains["twitterAlts"] */popupDomains[1]);
 
             ////////////////////// replace with this
             //populateSwitchButtonContainer(buttonContainer, deleteThis, popupDomains, chrome);       
@@ -91,21 +96,39 @@ async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh
 
 }
 
-function updateStorageOnChange(dropdown, key){  //on fresh install this promise might fail 
+function updateStorageOnChange(dropdown, key, groupHandle){  //on fresh install this promise might fail 
     dropdown.addEventListener("change", async function(event){
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => { //so there's no point returning a promise here, I don't know how to capture the promise since the anonymous function returns it, not updateStorageOnChange -- I can't call .then() on the latter
             chrome.storage.local.get([key], function(data){
+                let abc = 123;
+                const blargh = data.selectedStandins
+                const selectedStandins = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
+                abc = 234;
+                 console.log("got selected standins      " + JSON.stringify(selectedStandins));
+                // console.log("stored video domain is:     " + data[key]);
+                // console.log("event target value:   " + event.target.value )
+                for(let i = 0; i < selectedStandins.length; i++){
+                    console.log(selectedStandins[i].standin)
+                    if(selectedStandins[i].handle === groupHandle){
+                        selectedStandins[i].standin = event.target.value;
+                    }
+                }
+                console.log("NEW SELECTED STANDINS      " + JSON.stringify(selectedStandins));
+                //if( ! data[key]) reject(); //shouldn't this go before resolve()?
 
-                const abc = data[key]; //logging didn't work until I added this. It's weird man, nothing works right. You people are abusing functional programming
+                chrome.storage.local.set(/* { [key]: event.target.value} */{selectedStandins: selectedStandins}, function(data){
+                    console.log("SET SELECTED STANDIN DATA      " + JSON.stringify(data));
 
-                console.log("stored video domain is:     " + data[key]);
-                console.log("event target value:   " + event.target.value )
 
-                chrome.storage.local.set({ [key]: event.target.value});
+                    resolve(data[key]);    
+                })
 
-                resolve(data[key]);
+                // console.log("NEW SELECTED STANDINS      " + JSON.stringify(selectedStandins));
 
-                if( ! data[key]) reject();
+
+                // resolve(data[key]);
+
+                
             });
 
             
@@ -119,36 +142,41 @@ const domainGroupDropdownIdPairs = [
     {redditAlts: "reddit-dropdown"},
     {mediumAlts: "medium-dropdown"},
     {tiktokAlts: "tiktok-dropdown"}
-]
+];
 
 
 function populateDropdownContainer(
     popupDomains,
-    domainGroupDropdownIdPairs,
+    //domainGroupDropdownIdPairs,
+    groupNames,
     doc,
     dropdownContainer,
+    browser,
     createDropdownAndLabelCallback,
     createOptionCallback,
-    updateStorageOnChangeCallback
+    updateStorageOnChangeCallback,
+    setSelectedOptionsCallback
 ){
-    domainGroupDropdownIdPairs.forEach(groupAndId => {
-        const [groupName, dropdownId] = Object.entries(groupAndId)[0];
-        const domains = popupDomains[groupName];
+    /* domainGroupDropdownIdPairs. */groupNames.forEach(/* groupAndId */(groupName, index) => {
+        // const [groupName, dropdownId] = Object.entries(groupAndId)[0];
+        // const domains = popupDomains[groupName];
+        const domains = popupDomains[index];
+        const dropdownId = groupName + "-dropdown";
 
         console.log(`---GROUP NAME: ${groupName} \n ---DROPDOWN ID: ${dropdownId} \n ---DOMAINS: ${JSON.stringify(domains)}`);
 
         //should get the dropdown name instead of using the "somethingAlt" format
-        let dropdownAndLabel = createDropdownAndLabelCallback(dropdownId, groupName, domains, doc, createOptionCallback, updateStorageOnChangeCallback);
+        let dropdownAndLabel = createDropdownAndLabelCallback(dropdownId, groupName, domains, doc, createOptionCallback, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser);
 
         dropdownContainer.appendChild(dropdownAndLabel);
     }); 
 }
 
-function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChange){
-    let label = doc.createElement("label");
-    label.setAttribute("class", "dropdown-label");
-    label.setAttribute("for", id);
-    label.innerHTML = name;
+function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser){
+    // let label = doc.createElement("label");   //not using lables anymore
+    // label.setAttribute("class", "dropdown-label");
+    // label.setAttribute("for", id);
+    // label.innerHTML = name;
 
     let dropdown = doc.createElement("select");
     dropdown.setAttribute("id", id);
@@ -156,14 +184,14 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     
     //DELETE AND PASS PROPER STANDIN KEY
     //and pass actual dropdown name instead if "whateverAlt"
-    const deleteThis = {
-        youtubeAlts: "selectedYoutubeStandin",
-        twitterAlts: "selectedTwitterStandin",
-        redditAlts: "selectedRedditStandin",
-        mediumAlts: "selectedMediumStandin",
-        tiktokAlts: "selectedTiktokStandin",
-    }
-    updateStorageOnChange(dropdown, deleteThis[name]) ////////////////////////////////////
+    // const deleteThis = {
+    //     youtubeAlts: "selectedYoutubeStandin",
+    //     twitterAlts: "selectedTwitterStandin",
+    //     redditAlts: "selectedRedditStandin",
+    //     mediumAlts: "selectedMediumStandin",
+    //     tiktokAlts: "selectedTiktokStandin",
+    // }
+    updateStorageOnChangeCallback(dropdown, /* deleteThis[name] */"selectedStandins", name) //////////////////////////////////// LEARN HOW TO GET AND SET NESTED KEYS!
 
     domains.forEach(domain => {
         let domainName = domain
@@ -177,8 +205,10 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
 
     let dropdownAndLabel = doc.createElement("div");
     dropdownAndLabel.setAttribute("class", "dropdown-and-label");
-    dropdownAndLabel.appendChild(label);
+    //dropdownAndLabel.appendChild(label); //not using anymore
     dropdownAndLabel.appendChild(dropdown);
+
+    setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
 
     return dropdownAndLabel;
 }
@@ -190,6 +220,26 @@ function createOption(value, doc){
     option.innerHTML = value;
 
     return option;
+}
+
+function setSelectedOptions(key, domainHandle, dropdown, browser){
+    browser.storage.local.get([key], function(data){
+        const selectedStandins = data[key];
+        selectedStandins.forEach(standinObject => {
+            if(standinObject.handle === domainHandle){
+                const standin = standinObject.standin;
+                const optionsArray = Array.from(dropdown.options);
+                for(let i = 0; i < optionsArray.length; i++){
+                    const option = optionsArray[i];
+                    if(option.innerHTML.includes(standin)){
+                        dropdown.selectedIndex = i;
+                        console.log("444444: " + dropdown.selectedIndex + "      " + i)
+                        
+                    }
+                }
+            }
+        })
+    })
 }
 
 function checkForValidUrl(url){
@@ -235,7 +285,7 @@ function createStandinUrl(path, newDomain){
     return standin;
 }
 
-function populateDropdown(dropdown, uniqueDomains, id){
+function populateDropdown(dropdown, uniqueDomains, id){ //not using?
     const defaultDomainName = dropdown.options[0].value;
     const domainsWithoutDefault = uniqueDomains.filter(item => item !== defaultDomainName);
     if(domainsWithoutDefault.length){
