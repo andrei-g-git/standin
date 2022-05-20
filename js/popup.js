@@ -3,13 +3,10 @@ document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
 
-    const abc = ["popupDomains", "popupDomainsReplacer"];
-    const def = 123;
-    getDataFromStorage(chrome, "popupDomainsReplacer")
+    getDataFromStorage(chrome, "popupDomains")
         .then(data => {
 
-            //const popupDomains = data["popupDomains"];
-            const popupDomains = data["popupDomainsReplacer"];
+            const popupDomains = data["popupDomains"];
             const justDomainGroupArrays = popupDomains.map(group => group.domains);
             const justGroupNames = popupDomains.map(group => group.group);
 
@@ -145,7 +142,7 @@ async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh
                 dropdown.value = data[key];
             }   
             
-            if( ! data) reject(); //I'm not too sure about this... maybe there isn't supposed to be a a data object on a fresh install ... but the functions dependednt on this promise seem to get called just fine in this event...
+            if( ! data) reject(); 
         });
 
         resolve(dropdown.value);
@@ -203,7 +200,8 @@ function populateDropdownContainer(
 }
 
 function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser){
-    //no label, not stylish enough
+    //no label, labels aren't trendy
+
     let dropdown = doc.createElement("select");
     dropdown.setAttribute("id", id);
     dropdown.setAttribute("class", "dropdown");
@@ -233,7 +231,8 @@ function createOption(value, doc){
     let option = doc.createElement("option");
     option.setAttribute("class", "dropdown-option");
     option.setAttribute("value", value);
-    option.innerHTML = value;
+    //option.innerHTML = value;
+    option.appendChild(doc.createTextNode(value)); //mozilla doesn't like assigning directly to innerhtml, security issues etc
 
     return option;
 }
@@ -255,116 +254,6 @@ function setSelectedOptions(key, domainHandle, dropdown, browser){
         })
     })
 }
-
-// function checkForValidUrl(url){
-//     if(url && url.length){
-//         let hostName = ""
-//         if(url.includes("https://")){
-//             hostName = url.replace("https://", "");
-//             if(hostName.substring(0, 4) === "www."){
-//                 hostName = hostName.substring(4);
-//             }
-//             if(hostName.includes("/")){
-//                 const slashIndex = hostName.indexOf("/");
-//                 hostName = hostName.substring(0, slashIndex);
-
-//             } else {
-//                     console.log("url doesn't appear to link to any specific media")
-//             }
-
-
-//         } else {
-//             console.log("url has no protocol or valid certificate")
-//         }
-
-//         return hostName;
-//     } else {
-//         console.log("no url provided")
-//     }
-
-//     return "";
-// }
-
-
-// function extractPath(url, hostName){ 
-//     const pathStart = url.indexOf(hostName) + hostName.length + 1;
-//     return url.substring(pathStart);
-// }
-
-
-// function populateDropdown(dropdown, uniqueDomains, id){ //not using?
-//     const defaultDomainName = dropdown.options[0].value;
-//     const domainsWithoutDefault = uniqueDomains.filter(item => item !== defaultDomainName);
-//     if(domainsWithoutDefault.length){
-//         for(var i = 0; i < domainsWithoutDefault.length; i++){
-//             let domainHandle = domainsWithoutDefault[i];
-//             domainHandle = domainHandle.replace("https://", "");
-//             domainHandle = domainHandle.replace("www.");
-
-//             const option = document.createElement("option");
-//             option.setAttribute("class", id);
-//             option.setAttribute("value", domainHandle);
-//             option.innerHTML = domainHandle;
-
-//             dropdown.appendChild(option);
-//         }            
-//     } else { 
-//         console.log("unique domain list empty"); 
-//     }
-// }
-
-// function openStandinOnClick(switchSiteButton, key, uniqueDomains){
-//     if(switchSiteButton !== null){
-//         switchSiteButton.addEventListener("click", function(event){
-//             console.log("clicked");
-
-//             chrome.storage.local.get([key], function(data){
-//                 if(uniqueDomains.includes(data[key])){
-
-//                     chrome.tabs.query({active: true, currentWindow: true}, (allTabs) => {
-//                         const url = allTabs[0].url;
-
-//                         let hostName = checkForValidUrl(url);
-
-//                         if(hostName.length){
-
-//                             const path = extractPath(url, hostName);
-//                             console.log("PATH IS:    " + path);
-
-//                             if(path.length){
-
-//                                 const standin = createStandinUrl(path, data[key]);
-
-//                                 if(standin.length){
-
-//                                     ////////////////////////////
-//                                     chrome
-//                                         .tabs
-//                                         .create({
-//                                             url: standin
-//                                         })
-//                                     /////////////////////////////
-//                                 } else {
-//                                     console.log("something went wrong while finalizing the standin link")
-//                                 }
-//                             } else {
-//                                 console.log("something went wrong while extracting the common url path")
-//                             } 
-//                         } else {
-//                             console.log("something went wrong while extracting the host name")
-//                         }
-//                     });
-
-//                 } else {
-//                     console.log("domain name picked is invalid")
-//                 }
-//             });
-
-//         });
-//     } else {
-//         console.log("url switch button hasn't loaded into the document");
-//     }    
-// }
 
 
 

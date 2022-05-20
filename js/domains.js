@@ -22,15 +22,14 @@ const allSelected = {
             standin: "tiktok.com",
             handle: "tiktok"
         },    
-        {
-            standin: "reuters.com",
-            handle: "reuters"
-        },                              
+        // {
+        //     standin: "reuters.com",
+        //     handle: "reuters"
+        // },                              
     ]
 };
 
-//storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
-storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); //shouldn't need separate domains data but I'd have to do too much work to change how the context script works
+storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); 
 
 storeDataToStorage(chrome, getSupportedDomains());
 
@@ -39,7 +38,7 @@ storeDataToStorage(chrome, getDefaultPopupDomains());
 storeDataToStorage(chrome, allSelected);
 
 function storePossibleDomains(domainsObject, browser, key){
-    getDataFromStorage2(chrome, key)   /// there's something odd going on here, it seems to get the correct domains from storage even when there shouln't be any (browser says the extension local storage is empty even after reload)
+    getDataFromStorage2(chrome, key)   
         .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES
             if( ! data || ! data[key]){
                 storeDataToStorage(browser, domainsObject);
@@ -47,14 +46,14 @@ function storePossibleDomains(domainsObject, browser, key){
         });
 }
 
-function storeDataOnInstall(initialData, browser, key){ //use this instead, 
-    getDataFromStorage2(browser, key)   
-    .then((data) => {
-        if( ! data || ! data[key]){
-            storeDataToStorage(browser, initialData);
-        }
-    });    
-}
+// function storeDataOnInstall(initialData, browser, key){ 
+//     getDataFromStorage2(browser, key)   
+//     .then((data) => {
+//         if( ! data || ! data[key]){
+//             storeDataToStorage(browser, initialData);
+//         }
+//     });    
+// }
 
 function mergeAllDomains(...args){
     let allDomains = Array.prototype.concat(...args);
@@ -142,13 +141,13 @@ function getSupportedDomains(){
             ]
         },
         //DELETE
-        {
-            group: "reuters",
-            domains: [
-                "https://reuters.com",
-                "https://boxcat.site", 
-            ]
-        }    
+        // {
+        //     group: "reuters",
+        //     domains: [
+        //         "https://reuters.com",
+        //         "https://boxcat.site", 
+        //     ]
+        // }    
         
         
     ];
@@ -157,7 +156,7 @@ function getSupportedDomains(){
 }
 
 function getDefaultPopupDomains(){
-    const popupDomainsReplacer = [ //replace popup domains with this
+    const popupDomains = [ 
         {
             group: "youtube",
             domains: [
@@ -203,16 +202,16 @@ function getDefaultPopupDomains(){
         },
         //testing, delete
         //DELETE
-        {
-            group: "reuters",
-            domains: [
-                "https://reuters.com",
-                "https://boxcat.site", 
-            ]
-        }                         
+        // {
+        //     group: "reuters",
+        //     domains: [
+        //         "https://reuters.com",
+        //         "https://boxcat.site", 
+        //     ]
+        // }                         
     ];
 
-    return {popupDomainsReplacer: popupDomainsReplacer};
+    return {popupDomains: popupDomains};
 }
 
 function getBunchedUpDomains(getDomains, key){

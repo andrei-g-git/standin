@@ -1,3 +1,34 @@
+:root{
+    --primary-bluer: #59d5d4;
+    --primary-greener: #d5d65e;
+    --primary-warmer: #D6B1D6;
+    --opacity: .23;
+}
+
+.options-container{
+    display: flex;
+    justify-content: center;
+}
+
+.checbox-container{
+
+}
+
 .checkbox-group-and-label{
     margin-top: 10px;
+}
+
+.checkbox-group-label{
+    color: var(--primary-bluer);
+}
+.checkbox-and-label{
+    border-bottom: 1px solid var(--primary-bluer);
+}
+
+.domain-label{
+    color: var(--primary-warmer);
+}
+
+.domain-checkbox{
+
 }

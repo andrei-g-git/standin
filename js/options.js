@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", init);
 
+const groupLabelSuffix = " standins";
+
 function init(){
 
     let checkboxContainer = document.getElementById("checkbox-container");
@@ -39,7 +41,8 @@ function createCheckboxGroups(doc, parent, domainGroups, domainGroupNames){
         groupLabel.setAttribute("class", "checkbox-group-label");
         groupLabel.setAttribute("for", domainGroupNames[index]);
         groupLabel.setAttribute("value", domainGroupNames[index]);
-        groupLabel.innerHTML = domainGroupNames[index];
+        //groupLabel.innerHTML = domainGroupNames[index] + groupLabelSuffix;
+        groupLabel.appendChild(doc.createTextNode(domainGroupNames[index] + groupLabelSuffix)); //there are excurity issues with assigning directly to the innerhtml, apparently
 
         let groupWithLabel = doc.createElement("div");
         groupWithLabel.setAttribute("class", "checkbox-group-and-label");
@@ -70,7 +73,8 @@ function createCheckbox(doc, domain, index, groupIndex){
     let label = doc.createElement("label");
     label.setAttribute("class", "domain-label");
     label.setAttribute("for", "checbox-" + groupIndex + "-" + index);
-    label.innerHTML = domain;
+    //label.innerHTML = domain;
+    label.appendChild(doc.createTextNode(domain));
 
     let checkboxAndLabel = doc.createElement("div");
     checkboxAndLabel.setAttribute("class", "checkbox-and-label");
@@ -94,12 +98,14 @@ function handleCheckbox(checkboxAndLabel){
 
         console.log(groupLabel.innerHTML);
 
-        getDataFromStorage3(chrome, "popupDomainsReplacer")    //setting the browser from here goes against functional programming...
+        getDataFromStorage3(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
             .then(data => {
-                let popupDomains = data["popupDomainsReplacer"];
+                let popupDomains = data["popupDomains"];
                 let newPopupDomains = null;
                 if(event.target.checked){
-                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML, groupLabel.innerHTML);
+                    let groupLabelText = groupLabel.innerHTML.replace(groupLabelSuffix, "");
+                    console.log("group label text without suffix:     " + groupLabelText);
+                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML, groupLabelText);
                     console.log("true: " + label.innerHTML)
 
                 } else {
@@ -109,7 +115,7 @@ function handleCheckbox(checkboxAndLabel){
                     console.log(JSON.stringify(newPopupDomains))
                 }
 
-                storeDataToStorage(chrome, {popupDomainsReplacer: newPopupDomains})
+                storeDataToStorage(chrome, {popupDomains: newPopupDomains})
             });
 
 

@@ -22,7 +22,7 @@ function handleContextClick(event, browser, getDomainNames, domainsKey){
 
             const path = extractUrlPath(event.linkUrl, validDomain);
 
-            loadStandinDomainName(validDomain, "selectedStandins", "popupDomainsReplacer", browser)
+            loadStandinDomainName(validDomain, "selectedStandins", /* "popupDomainsReplacer" */"popupDomains", browser)
                 .then((domain) => {
                     openStandinlink(domain, path, browser, event);
                 });
