@@ -1,47 +1,33 @@
-//need to replace "popupDomains" and the selectedStanddin host keys
-
 document.addEventListener("DOMContentLoaded", init);
 
 function init(){
 
-    const domainKeys = [
-        "youtubeAlts",
-        "twitterAlts",
-        "redditAlts",
-        "mediumAlts",
-        "tiktokAlts" 
-    ];
     let checkboxContainer = document.getElementById("checkbox-container");
 
     if(checkboxContainer){ 
-        getDataFromStorage3(chrome, ...domainKeys)
-            .then(domainGroups => {
-                if(Object.keys(domainGroups).length){
+        getDataFromStorage3(chrome, "supportedDomains")
+            .then( data => {
+                const domainGroups = data["supportedDomains"];
+                if(domainGroups.length){
 
+                    const groupNames = domainGroups.map(group => group.group);
+                    const domains = domainGroups.map(group => group.domains);
                     createCheckboxGroups(
                         document, 
                         checkboxContainer, 
-                        //...Object.values(domainGroups) //without spreading in a new array --- that creates a wrapper array with 1 item holding the domainGroups
-                        Object.values(domainGroups),
-                        Object.keys(domainGroups)
+                        domains,
+                        groupNames
                     );                    
                 } else {
                     console.log("did not yet load domains")
                 }
-
-
                 handleAllCheckboxGroups(document, "checkbox-and-label", handleCheckbox);
-
-
             })
             .catch(err => console.error(err));     
-
     }
-
-
 }
 
-function createCheckboxGroups(doc, parent, /* ... */domainGroups, domainGroupNames){
+function createCheckboxGroups(doc, parent, domainGroups, domainGroupNames){
     domainGroups.forEach((domainGroup, index) => {
         let checkboxGroup = doc.createElement("div");
         checkboxGroup.setAttribute("class", "checkbox-group");
@@ -97,15 +83,10 @@ function createCheckbox(doc, domain, index, groupIndex){
 }
 
 function handleCheckbox(checkboxAndLabel){
-    //I guess queryselectorall only works on the entire document?...
-    // let label = checkboxAndLabel.querySelectorAll("label, div[class*='label']");
-    // let checkbox = checkboxAndLabel.querySelectorAll("input, div[class*='checkbox'], div[class*='check-box'], div[class*='check']")
-
     let checkboxGroup = checkboxAndLabel.parentNode;
     let groupWithLabel = checkboxGroup.parentNode;
     let groupLabel = groupWithLabel.getElementsByTagName("label")[0];
     
-
     let label = checkboxAndLabel.getElementsByTagName("label")[0];
     let checkbox = checkboxAndLabel.getElementsByTagName("input")[0];
 
@@ -113,26 +94,22 @@ function handleCheckbox(checkboxAndLabel){
 
         console.log(groupLabel.innerHTML);
 
-        getDataFromStorage3(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
+        getDataFromStorage3(chrome, "popupDomainsReplacer")    //setting the browser from here goes against functional programming...
             .then(data => {
-                let popupDomains = data["popupDomains"];
-
+                let popupDomains = data["popupDomainsReplacer"];
                 let newPopupDomains = null;
-
                 if(event.target.checked){
+                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML, groupLabel.innerHTML);
                     console.log("true: " + label.innerHTML)
 
-                    newPopupDomains = addPopupDomain(popupDomains, label.innerHTML, groupLabel.innerHTML);
-
                 } else {
-                    console.log("false: " + label.innerHTML)
-
                     newPopupDomains = removePopupDomain(popupDomains, label.innerHTML);
 
+                    console.log("false: " + label.innerHTML)
                     console.log(JSON.stringify(newPopupDomains))
                 }
 
-                storeDataToStorage(chrome, {popupDomains, newPopupDomains})
+                storeDataToStorage(chrome, {popupDomainsReplacer: newPopupDomains})
             });
 
 
@@ -165,13 +142,11 @@ async function storeDataToStorage(browser, data){
 }
 
 function addPopupDomain(popupDomains, domain, domainGroupName){ //mucho repeato
-    Object.entries(popupDomains).forEach(altGroup => { 
-        let groupHandle = altGroup[0];
-        let realAltGroup = altGroup[1];
-        const abc = 123;
+    popupDomains.forEach(group => { 
+        let groupHandle = group.group; 
+        let realAltGroup = group.domains; 
         if(groupHandle === domainGroupName){
-            if(altGroup.length &&   !    realAltGroup.includes(domain)){ 
-
+            if(realAltGroup.length &&   !    realAltGroup.includes(domain)){ 
                 realAltGroup.push(domain)
             }            
         }
@@ -181,11 +156,9 @@ function addPopupDomain(popupDomains, domain, domainGroupName){ //mucho repeato
 }
 
 function removePopupDomain(popupDomains, domain) {
-    Object.entries(popupDomains).forEach(altGroup => { // IF NESTED ENTRIES IT WILL RETURN THE PARENT ENTRY AS item 0 AND item 1 AS THE CHILD ENTRIES
-        let realAltGroup = altGroup[1];
-        const abc = 123;
-        if(altGroup.length && realAltGroup.includes(domain)){ //for some reason indexOf doesn't work, it just skips everything
-
+    popupDomains.forEach(group => { 
+        let realAltGroup = group.domains; 
+        if(realAltGroup.length && realAltGroup.includes(domain)){ 
             realAltGroup.splice(
                 realAltGroup.indexOf(domain),
                 1

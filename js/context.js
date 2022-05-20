@@ -16,7 +16,7 @@ browser
 
 function handleContextClick(event, browser, getDomainNames, domainsKey){ 
 
-    getDomainNames(browser, domainsKey)
+    getDomainNames(browser, domainsKey) //this is redundant but changing it to just grab popupDomains(replacer) and map a pure domains list is too much of a hassle
         .then(domainList => {
             const validDomain = validateClickedLink(event.linkUrl, domainList);
 
@@ -99,20 +99,6 @@ function openStandinlink(domain, path, browser, event){
 }
 
 async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, browser){
-    // let key = "selectedYoutubeStandin"; //this is rigid and clunky, obviously I'll have to replace it
-    // if(sourceDomain.includes("twitter") || sourceDomain.includes("nitter")){
-    //     key = "selectedTwitterStandin";
-    // }
-    // if(sourceDomain.includes("reddit") || sourceDomain.includes("teddit")){
-    //     key = "selectedRedditStandin";
-    // }   
-    // if(sourceDomain.includes("medium") || sourceDomain.includes("scribe")){
-    //     key = "selectedMediumStandin";
-    // }        
-    // if(sourceDomain.includes("tiktok") || sourceDomain.includes("proxitok")){
-    //     key = "selectedTiktokStandin";
-    // } 
-    
 
     let domain;
 

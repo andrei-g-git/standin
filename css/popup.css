@@ -6,23 +6,27 @@
 }
 
 .main-container{
-    /* background-color: aquamarine; */
 
-    /* width: 150px; */
-
-    /* padding: 0 3px;  */
-
-
-   /*  background: url(assets/open-pink-64.png) no-repeat right white; */
-   /* background: url(http://www.clker.com/cliparts/M/h/m/S/a/O/shaded-red-apple-th.png) no-repeat left transparent; */ /* so this works... */
-   /* background: url(assets/open-pink-64.png) no-repeat left transparent; */ /* but not this... */
 }
 
-.options-gear{
+.options-button{
+    position: relative;
     width: 16px;
-    height: 16px;
-    /* background: url(https://www.iconsdb.com/icons/preview/pink/cog-xxl.png) no-repeat left transparent;
-    background-size: contain; */
+    height: 16px;    
+}
+.options-gear{
+    width: 100%;
+    height: auto;
+}
+
+.options-button button {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    border: none;
 }
 
 .dropdown-container{
@@ -35,12 +39,41 @@
 }
 
 .standin-button-container{
-    display: flex; /* this is going to be a grid */
+/*     display: flex; 
     flex-direction: column;
-    align-items: center;
+    align-items: center;*/
 
-    height: auto;
-    min-height: 70px;
+    /* height: auto;
+    min-height: 70px;  */
+    width: 100%;
+    height: auto; /* 80px; */
+
+    display: grid;
+    grid-template-columns: repeat(11, 1fr);
+    grid-template-rows: repeat(/* 7 */6, 1fr);
+    grid-template-areas: 
+        " . . a a a . b b b . . "
+        " . . a a a . b b b . . "
+        " . . a a a . b b b . . "
+        /* " . . . . . . . . . . ." */
+        " c c c . d d d . e e e "    
+        " c c c . d d d . e e e "
+        " c c c . d d d . e e e "
+        " . . f f f . g g g . . "
+        " . . f f f . g g g . . "
+        " . . f f f . g g g . . "     
+        " h h h . i i i . j j j "    
+        " h h h . i i i . j j j "
+        " h h h . i i i . j j j "     
+        " . . k k k . l l l . . "
+        " . . k k k . l l l . . "
+        " . . k k k . l l l . . "   
+        " m m m . n n n . o o o "    
+        " m m m . n n n . o o o "
+        " m m m . n n n . o o o "                          
+    ;    
+
+    margin-top: 20px;
 }
 
 .dropdown{
@@ -50,24 +83,15 @@
 
     border: none;
     background-color: unset;
-    /* background: transparent; */
     outline: none;
 
     color: var(--primary-warmer);
-
-    /* border-bottom: 4px solid pink;
-
-    background-image: url(assets/open-pink-64.png);
-    background-repeat: no-repeat;
-    background-position-x: 100%;
-    background-position-y: 5px; */
 }
 
 .dropdown-and-label{ /* should rename class, not using labels anymore */
     width: 100px;
     height: 20px;
     overflow: hidden;
-    /* background: url(assets/open-pink-64.png) no-repeat right transparent; */
 
     border-bottom: 3px solid var(--primary-bluer);
 }
@@ -80,7 +104,26 @@
     position: relative;
     width: 32px;
     height: 32px;
+    border: 1px solid red;
 }
+
+.switch-site-button:nth-child(1){ grid-area: a;}
+.switch-site-button:nth-child(2){ grid-area: b;}
+.switch-site-button:nth-child(3){ grid-area: c;}
+.switch-site-button:nth-child(4){ grid-area: d;}
+.switch-site-button:nth-child(5){ grid-area: e;}
+/* future standin buttons */
+.switch-site-button:nth-child(6){ grid-area: f;}
+.switch-site-button:nth-child(7){ grid-area: g;}
+.switch-site-button:nth-child(8){ grid-area: h;}
+.switch-site-button:nth-child(9){ grid-area: i;}
+.switch-site-button:nth-child(10){ grid-area: j;}
+.switch-site-button:nth-child(11){ grid-area: k;}
+.switch-site-button:nth-child(12){ grid-area: l;}
+.switch-site-button:nth-child(13){ grid-area: m;}
+.switch-site-button:nth-child(14){ grid-area: n;}
+.switch-site-button:nth-child(15){ grid-area: o;}
+
 
 .switch-site-button img {
     width: 100%;

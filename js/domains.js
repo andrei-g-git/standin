@@ -1,91 +1,4 @@
 
-const allDomains = mergeAllDomains(
-    getYoutubeAlts(),
-    getTwitterAlts(),
-    getRedditAlts(),
-    getMediumAlts(),
-    getTicktockAlts()
-);
-
-const domainsObject = {
-    domains: allDomains,
-    youtubeAlts: getYoutubeAlts(),
-    twitterAlts: getTwitterAlts(),
-    redditAlts: getRedditAlts(),
-    mediumAlts: getMediumAlts(),
-    ticktockAlts: getTicktockAlts()    
-};
-
-const initialDropdownData = {
-    popupDomains: {
-        youtubeAlts: [
-            "https://youtube.com",
-            "https://piped.kavin.rocks",
-            "https://yewtu.be",
-        ],
-        twitterAlts: [
-            "https://twitter.com",
-            "https://nitter.net",
-        ],
-        redditAlts: [
-            "https://reddit.com",
-            "https://teddit.net"
-        ],
-        mediumAlts: [
-            "https://medium.com",
-            "https://scribe.rip"
-        ],
-        tiktokAlts: [
-            "https://tiktok.com",
-            "https://proxitok.herokuapp.com"
-        ]        
-    }
-
-};
-
-const domainGroupProperties = {
-    domainGroupProperties: [
-        {
-            youtubeAlts: {
-                    dropdownId: "youtube-dropdown",
-                    dropdownLabel: "youtube" 
-        
-            }
-        },
-        {
-            twitterAlts: {
-                dropdownId: "twitter-dropdown",
-                dropdownLabel: "twitter"
-            }
-        },
-        {
-            redditAlts: {
-                dropdownId: "reddit-dropdown",
-                dropdownLabel: "reddit"
-            }
-        },
-        {
-            mediumAlts: {
-                dropdownId: "medium-dropdown",
-                dropdownLabel: "medium"
-            }
-        },
-        {
-            ticktockAlts: {
-                dropdownId: "ticktock-dropdown",
-                dropdownLabel: "tiktok"
-            }
-        }          
-    ]
-}
-
-const selectedStandins = {
-    selectedYoutubeStandin: "youtube.com",
-    selectedTwitterStandin: "twitter.com",
-    selectedRedditStandin: "reddit.com",
-    selectedMediumStandin: "medium.com",
-    selectedTiktokStandin: "tiktok.com"
-};
 
 const allSelected = {
     selectedStandins: [
@@ -108,21 +21,21 @@ const allSelected = {
         {
             standin: "tiktok.com",
             handle: "tiktok"
-        },                                
+        },    
+        {
+            standin: "reuters.com",
+            handle: "reuters"
+        },                              
     ]
 };
 
-storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
-//replace with
-storeDataToStorage(chrome, getPopupDomains());
+//storePossibleDomains(domainsObject, chrome, "domains"); //use storeDataOnInstall, it's universal
+storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); //shouldn't need separate domains data but I'd have to do too much work to change how the context script works
 
-storeDataOnInstall(initialDropdownData, chrome, "defaultPopupDomains");
+storeDataToStorage(chrome, getSupportedDomains());
 
-storeDataOnInstall(domainGroupProperties, chrome, "domainGroupProperties");
+storeDataToStorage(chrome, getDefaultPopupDomains());
 
-storeDataOnInstall(selectedStandins, chrome, /* "selectedStandins" */ "doesn't matter");
-
-//storeDataOnInstall is useless, don't need to check if data already exists, it won't
 storeDataToStorage(chrome, allSelected);
 
 function storePossibleDomains(domainsObject, browser, key){
@@ -165,8 +78,8 @@ async function storeDataToStorage(browser, data){
     });
 }
 
-function getPopupDomains(){
-    const popupDomainsReplacer = [ //replace popup domains with this
+function getSupportedDomains(){
+    const supportedDomains = [ 
         {
             group: "youtube",
             domains: [
@@ -209,7 +122,7 @@ function getPopupDomains(){
             domains: [
                 "https://reddit.com",
                 //reddit
-                "https://teddit.net/",
+                "https://teddit.net",
             ]
         },
         {
@@ -217,7 +130,7 @@ function getPopupDomains(){
             domains: [
                 "https://medium.com",
                 //medium
-                "https://scribe.rip/",
+                "https://scribe.rip",
             ]
         },
         {
@@ -225,79 +138,93 @@ function getPopupDomains(){
             domains: [
                 "https://tiktok.com",
                 //ticktock ... god forgive me for I have enabled cancer
-                "https://proxitok.herokuapp.com/", 
+                "https://proxitok.herokuapp.com", 
             ]
-        }                
+        },
+        //DELETE
+        {
+            group: "reuters",
+            domains: [
+                "https://reuters.com",
+                "https://boxcat.site", 
+            ]
+        }    
+        
+        
+    ];
+
+    return {supportedDomains: supportedDomains};
+}
+
+function getDefaultPopupDomains(){
+    const popupDomainsReplacer = [ //replace popup domains with this
+        {
+            group: "youtube",
+            domains: [
+                "https://youtube.com",
+                //piped
+                "https://piped.kavin.rocks",
+                //invidious
+                "https://yewtu.be",
+                "https://invidio.xamh.de"
+            ]
+        },
+        {
+            group: "twitter",
+            domains: [
+                "https://twitter.com",
+                //nitter
+                "https://nitter.net",
+            ]
+        },
+        {
+            group: "reddit",
+            domains: [
+                "https://reddit.com",
+                //reddit
+                "https://teddit.net",
+            ]
+        },
+        {
+            group: "medium",
+            domains: [
+                "https://medium.com",
+                //medium
+                "https://scribe.rip",
+            ]
+        },
+        {
+            group: "tiktok",
+            domains: [
+                "https://tiktok.com",
+                //ticktock ... god forgive me for I have enabled cancer
+                "https://proxitok.herokuapp.com", 
+            ]
+        },
+        //testing, delete
+        //DELETE
+        {
+            group: "reuters",
+            domains: [
+                "https://reuters.com",
+                "https://boxcat.site", 
+            ]
+        }                         
     ];
 
     return {popupDomainsReplacer: popupDomainsReplacer};
 }
 
-function getYoutubeAlts(){
-    return [
-        "https://youtube.com",
-        //piped
-        "https://piped.kavin.rocks",
-        "https://piped.silkky.cloud",
-        "https://piped.tokhmi.xyz",
-        "https://piped.moomoo.me",
-        "https://piped.syncpundit.com",
-        "https://piped.mha.fi",
-        "https://piped.privacy.com.de",
-        //invidious
-        "https://yewtu.be",
-        "https://vid.puffyan.us",
-        "https://invidious.snopyta.org",
-        "https://invidious.kavin.rocks",
-        "https://inv.riverside.rocks",
-        "https://invidious.osi.kr",
-        "https://y.com.sb",
-        "https://tube.cthd.icu",
-        "https://invidious.flokinet.to",
-        "https://yt.artemislena.eu",
-        "https://invidious.se...ivacy.com",
-        "https://inv.bp.projectsegfau.lt",
-        "https://invidious.lunar.icu",
-        "https:/invidious.xamh.de",
-    ];
-}  
-
-function getTwitterAlts(){
-    return [
-        "https://twitter.com",
-        //nitter
-        "https://nitter.net",
-    ];   
+function getBunchedUpDomains(getDomains, key){
+    const domainData = getDomains();
+    const domains = domainData[key];
+    const arrayGroups = domains.map(object => object.domains);
+    const bunchedUpDomains = [];
+    arrayGroups.forEach(group => {
+        bunchedUpDomains.push.apply(bunchedUpDomains, group);
+    });
+    console.log("bunched up domains:   " + bunchedUpDomains);
+    return bunchedUpDomains;
 }
-
-
-function getRedditAlts(){
-    return [
-        "https://reddit.com",
-        //reddit
-        "https://teddit.net/",
-    ];    
-} 
-
-
-function getMediumAlts(){
-    return [
-        "https://medium.com",
-        //medium
-        "https://scribe.rip/",
-    ];    
-}
-
-
-function getTicktockAlts(){
-    return [
-        "https://tiktok.com",
-        //ticktock ... god forgive me for I have enabled cancer
-        "https://proxitok.herokuapp.com/", 
-    ];
-}
-
-
-
 
 
