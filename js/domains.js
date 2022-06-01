@@ -105,7 +105,9 @@ function getSupportedDomains(){
                 "https://invidious.se...ivacy.com",
                 "https://inv.bp.projectsegfau.lt",
                 "https://invidious.lunar.icu",
-                "https:/invidious.xamh.de",
+                "https://invidious.xamh.de",
+                //youtu.be
+                "https://youtu.be"
             ]
         },
         {
@@ -165,7 +167,9 @@ function getDefaultPopupDomains(){
                 "https://piped.kavin.rocks",
                 //invidious
                 "https://yewtu.be",
-                "https://invidio.xamh.de"
+                "https://invidio.xamh.de",
+                //youtu.be
+                "https://youtu.be"
             ]
         },
         {
