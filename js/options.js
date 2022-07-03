@@ -7,17 +7,20 @@ function init(){
     let checkboxContainer = document.getElementById("checkbox-container");
 
     if(checkboxContainer){ 
-        getDataFromStorage3(chrome, "supportedDomains")
+        getDataFromStorage3(chrome, "supportedDomains", "popupDomains")
             .then( data => {
                 const domainGroups = data["supportedDomains"];
+                const groupsWithDefaultDomains = data["popupDomains"];
                 if(domainGroups.length){
 
                     const groupNames = domainGroups.map(group => group.group);
                     const domains = domainGroups.map(group => group.domains);
+                    const defaultDomains = groupsWithDefaultDomains.map(group => group.domains);
                     createCheckboxGroups(
                         document, 
                         checkboxContainer, 
                         domains,
+                        defaultDomains,
                         groupNames
                     );                    
                 } else {
@@ -29,13 +32,13 @@ function init(){
     }
 }
 
-function createCheckboxGroups(doc, parent, domainGroups, domainGroupNames){
+function createCheckboxGroups(doc, parent, domainGroups, defaultDomainGroup, domainGroupNames){
     domainGroups.forEach((domainGroup, index) => {
         let checkboxGroup = doc.createElement("div");
         checkboxGroup.setAttribute("class", "checkbox-group");
         checkboxGroup.setAttribute("value", domainGroupNames[index]);
         checkboxGroup.setAttribute("name", domainGroupNames[index]);
-        checkboxGroup = populateCheckboxGroup(doc, checkboxGroup, domainGroup, index);
+        checkboxGroup = populateCheckboxGroup(doc, checkboxGroup, domainGroup, defaultDomainGroup, index);
 
         let groupLabel = doc.createElement("label");
         groupLabel.setAttribute("class", "checkbox-group-label");
@@ -55,15 +58,15 @@ function createCheckboxGroups(doc, parent, domainGroups, domainGroupNames){
     
 }
 
-function populateCheckboxGroup(doc, checkboxGroup, domainGroup, groupIndex){
+function populateCheckboxGroup(doc, checkboxGroup, domainGroup, defaultDomainGroup, groupIndex){
     for(let i = 0; i < domainGroup.length; i++){
-        checkboxGroup.appendChild(createCheckbox(doc, domainGroup[i], i, groupIndex));
+        checkboxGroup.appendChild(createCheckbox(doc, domainGroup[i], i, groupIndex, defaultDomainGroup/* [i] */));
     }
 
     return checkboxGroup;
 }
 
-function createCheckbox(doc, domain, index, groupIndex){
+function createCheckbox(doc, domain, index, groupIndex, defaultDomainGroupS){
     let checkbox = doc.createElement("input");
     checkbox.setAttribute("type", "checkbox");
     checkbox.setAttribute("class", "domain-checkbox");
@@ -79,6 +82,18 @@ function createCheckbox(doc, domain, index, groupIndex){
     let checkboxAndLabel = doc.createElement("div");
     checkboxAndLabel.setAttribute("class", "checkbox-and-label");
     checkboxAndLabel.setAttribute("id", "checkbox-and-label-" + groupIndex + "-" + index);
+
+    
+    defaultDomainGroupS.forEach((group, index) => {
+        console.log(index)
+        console.log(group)
+        console.log(domain)
+        if(group.includes(domain)){
+            console.log("included")
+            checkbox.checked = true; 
+        }
+    });
+
 
     checkboxAndLabel.appendChild(checkbox);
     checkboxAndLabel.appendChild(label);
