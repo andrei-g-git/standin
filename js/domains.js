@@ -3,23 +3,23 @@
 const allSelected = {
     selectedStandins: [
         {
-            standin: "youtube.com", 
+            standin: "piped.kavin.rocks",//"youtube.com", 
             handle: "youtube" //these are constant
         },
         {
-            standin: "twitter.com",
+            standin: "nitter.net",//"twitter.com",
             handle: "twitter"
         },
         {
-            standin: "reddit.com",
+            standin: "teddid.net",//"reddit.com",
             handle: "reddit"
         },
         {
-            standin: "medium.com",
+            standin: "scribe.rip",//"medium.com",
             handle: "medium"
         },
         {
-            standin: "tiktok.com",
+            standin: "proxitok.herokuapp.com",//"tiktok.com",
             handle: "tiktok"
         },    
         // {
@@ -124,6 +124,7 @@ function getSupportedDomains(){
                 "https://reddit.com",
                 //reddit
                 "https://teddit.net",
+                "https://libredd.it"
             ]
         },
         {
@@ -186,6 +187,7 @@ function getDefaultPopupDomains(){
                 "https://reddit.com",
                 //reddit
                 "https://teddit.net",
+                "https://libredd.it"
             ]
         },
         {
