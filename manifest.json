@@ -1,7 +1,7 @@
 {
     "manifest_version": 2, 
     "name": "Standin",
-    "version": "0.1.95",
+    "version": "0.1.96",
     "description": "Open pages from sites like Youtube or Twitter with alternative frontends like Piped or Nitter!",
     "icons": {
         "128": "assets/logo128.png",

@@ -128,8 +128,8 @@ function getSupportedDomains() {
     "https://teddit.net", "https://libredd.it"]
   }, {
     group: "medium",
-    domains: ["https://medium.com", //medium
-    "https://scribe.rip"]
+    domains: ["https://medium.com", //scribe
+    "https://scribe.rip", "https://scribe.froth.zone", "https://scribe.bus-hit.me", "https://scribe.citizen4.eu", "https://scribe.nixnet.services"]
   }, {
     group: "tiktok",
     domains: ["https://tiktok.com", //ticktock ... god forgive me for I have enabled cancer

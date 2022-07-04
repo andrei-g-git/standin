@@ -135,8 +135,12 @@ function getSupportedDomains(){
             group: "medium",
             domains: [
                 "https://medium.com",
-                //medium
+                //scribe
                 "https://scribe.rip",
+                "https://scribe.froth.zone",
+                "https://scribe.bus-hit.me",
+                "https://scribe.citizen4.eu",
+                "https://scribe.nixnet.services",
             ]
         },
         {
