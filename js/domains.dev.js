@@ -22,6 +22,9 @@ var allSelected = {
     standin: "proxitok.herokuapp.com",
     //"tiktok.com",
     handle: "tiktok"
+  }, {
+    standin: "i.bcow.xyz",
+    handle: "imgur"
   } // {
   //     standin: "reuters.com",
   //     handle: "reuters"
@@ -131,6 +134,11 @@ function getSupportedDomains() {
     group: "tiktok",
     domains: ["https://tiktok.com", //ticktock ... god forgive me for I have enabled cancer
     "https://proxitok.herokuapp.com"]
+  }, {
+    group: "imgur",
+    domains: [//rimgo
+    "https://imgur.com", "https://i.bcow.xyz", "https://rimgo.pussthecat.org", "https://rimgo.totaldarkness.net", "https://rimgo.bus-hit.me", "https://rimgo.esmailelbob.xyz", "https://rimgo.lunar.icu", "https://i.actionsack.com", "https://rimgo.privacydev.net", "https://imgur.artemislena.eu", "https://rimgo.encrypted-data.xyz", //imgin
+    "https://imgin.voidnet.tech"]
   } //DELETE
   // {
   //     group: "reuters",
@@ -168,6 +176,11 @@ function getDefaultPopupDomains() {
     group: "tiktok",
     domains: ["https://tiktok.com", //ticktock ... god forgive me for I have enabled cancer
     "https://proxitok.herokuapp.com"]
+  }, {
+    group: "imgur",
+    domains: ["https://imgur.com", //rimgo
+    "https://i.bcow.xyz", //imgin
+    "https://imgin.voidnet.tech"]
   } //testing, delete
   //DELETE
   // {
