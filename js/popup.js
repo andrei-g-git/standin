@@ -21,7 +21,7 @@ function init(){
                 createDropdownAndLabel,
                 createOption,
                 updateStorageOnChange,
-                setSelectedOptions
+                setSelectedOptions 
             );
 
             // let buttonContainer = document.getElementById("standin-button-container");
@@ -200,6 +200,7 @@ function populateDropdownContainer(
     }); 
 }
 
+//and switch button, apparently...
 function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser){
     //no label, labels aren't trendy
 
@@ -233,14 +234,24 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     container.appendChild(standinButton);
 
     //no bueno
-    getDataFromStorage(chrome, "selectedStandins")
+    handleSwitchButtonClick(chrome, domains, name, "selectedStandins", standinButton, createStandinUrl, getDataFromStorage);
+
+
+    setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
+
+    //return dropdownAndLabel;
+    return container;
+}
+
+const handleSwitchButtonClick = (browser, domains, groupName, key, button, createStandinUrl, getDataFromStorage) => {
+    getDataFromStorage(browser, key)
         .then(
             data => {
-                const selectedStandins = data["selectedStandins"];
-                const standinObject = selectedStandins.filter(standinObject => standinObject.handle === name)[0];
+                const selectedStandins = data[key];
+                const standinObject = selectedStandins.filter(standinObject => standinObject.handle === groupName)[0];
                 const standin = standinObject.standin;
 
-                standinButton.addEventListener("click", function(event){
+                button.addEventListener("click", function(event){
                     createStandinUrl(browser, standin, domains)
                         .then(newUrl => {
                             if(newUrl){
@@ -254,12 +265,6 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
                 });                
             }
         )
-
-
-    setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
-
-    //return dropdownAndLabel;
-    return container;
 }
 
 function createOption(value, doc){
