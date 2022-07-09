@@ -3,7 +3,7 @@ document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
 
-    getDataFromStorage(chrome, "popupDomains")
+    getDataFromStorage(chrome, "popupDomains", "selectedStandins")
         .then(data => {
 
             const popupDomains = data["popupDomains"];
@@ -34,12 +34,30 @@ function init(){
             //     createSwitchButton
             // );       
 
+            addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
         }); 
 
     const optionsButton = document.getElementById("options-button");
     if(optionsButton){
         optionsButton.addEventListener("click", function(){
             chrome.tabs.create({url: "options.html"}, () => console.log("options page should open"))
+        });        
+    }
+
+}
+
+function addStandinButtons(browser, doc, key, popupDomains, dropdownContainer, createSwitchButton){
+    if(dropdownContainer){
+        const dorpdownAndLabelWrappers = dropdownContainer.querySelectorAll(".dropdown-and-label-container");
+        dorpdownAndLabelWrappers.forEach((wrapper, index) => {
+            //assume dropdown group order corresponds to popupDomains group order
+            const domainGroup = popupDomains[index];
+            const groupName = domainGroup.group;
+            const button = createSwitchButton(doc, groupName);
+                                                //since I have the domainGroup I don't really need to pass the group name, that's stored in the group property
+            handleSwitchButtonClick(browser, domainGroup.domains, groupName, key, button, createStandinUrl/* , getDataFromStorage */);
+
+            wrapper.appendChild(button);
         });        
     }
 
@@ -110,6 +128,7 @@ async function createStandinUrl(browser, standin, domains){
                 const domainName = withoutProtocolAndWWW.slice(0, slashPos);
                 console.log("without protocol and www:   " + withoutProtocolAndWWW + "\n" + "slashPos:    " + slashPos + "\n" + "domain name:   " + domainName)
                 if(domainName && domainName.length){
+                    console.log("DOMAINS:   " + JSON.stringify(domains))// DELETE
                     const validDomains = domains.filter(domain => domain.includes(domainName));
                     console.log("valid domains:   " + validDomains);
                     if(validDomains.length){
@@ -200,7 +219,6 @@ function populateDropdownContainer(
     }); 
 }
 
-//and switch button, apparently...
 function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser){
     //no label, labels aren't trendy
 
@@ -220,9 +238,6 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
         dropdown.appendChild(option);
     });
 
-    //new
-    let standinButton = createSwitchButton(doc, name);
-
     let dropdownAndLabel = doc.createElement("div");
     dropdownAndLabel.setAttribute("class", "dropdown-and-label"); //this is just a wrapper for the dropdown so I can remove it's default stylings
     dropdownAndLabel.appendChild(dropdown);
@@ -231,11 +246,6 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     let container = doc.createElement("div");
     container.setAttribute("class", "dropdown-and-label-container");
     container.appendChild(dropdownAndLabel);
-    container.appendChild(standinButton);
-
-    //no bueno
-    handleSwitchButtonClick(chrome, domains, name, "selectedStandins", standinButton, createStandinUrl, getDataFromStorage);
-
 
     setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
 
@@ -243,17 +253,18 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     return container;
 }
 
-const handleSwitchButtonClick = (browser, domains, groupName, key, button, createStandinUrl, getDataFromStorage) => {
-    getDataFromStorage(browser, key)
-        .then(
-            data => {
-                const selectedStandins = data[key];
+const handleSwitchButtonClick = (browser, domains, groupName, selectedStandins, button, createStandinUrl) => {
+    // getDataFromStorage(browser, key)
+    //     .then(
+    //         data => {
+    //             const selectedStandins = data[key];
                 const standinObject = selectedStandins.filter(standinObject => standinObject.handle === groupName)[0];
                 const standin = standinObject.standin;
 
                 button.addEventListener("click", function(event){
                     createStandinUrl(browser, standin, domains)
                         .then(newUrl => {
+                            console.log("NEW URL:  " + newUrl) //delete
                             if(newUrl){
                                 browser
                                 .tabs
@@ -263,8 +274,8 @@ const handleSwitchButtonClick = (browser, domains, groupName, key, button, creat
                             }
                         })
                 });                
-            }
-        )
+        //     }
+        // )
 }
 
 function createOption(value, doc){

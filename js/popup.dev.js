@@ -5,7 +5,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 document.addEventListener('DOMContentLoaded', init);
 
 function init() {
-  getDataFromStorage(chrome, "popupDomains").then(function (data) {
+  getDataFromStorage(chrome, "popupDomains", "selectedStandins").then(function (data) {
     var popupDomains = data["popupDomains"];
     var justDomainGroupArrays = popupDomains.map(function (group) {
       return group.domains;
@@ -23,6 +23,8 @@ function init() {
     //     document, 
     //     createSwitchButton
     // );       
+
+    addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
   });
   var optionsButton = document.getElementById("options-button");
 
@@ -33,6 +35,23 @@ function init() {
       }, function () {
         return console.log("options page should open");
       });
+    });
+  }
+}
+
+function addStandinButtons(browser, doc, key, popupDomains, dropdownContainer, createSwitchButton) {
+  if (dropdownContainer) {
+    var dorpdownAndLabelWrappers = dropdownContainer.querySelectorAll(".dropdown-and-label-container");
+    dorpdownAndLabelWrappers.forEach(function (wrapper, index) {
+      //assume dropdown group order corresponds to popupDomains group order
+      var domainGroup = popupDomains[index];
+      var groupName = domainGroup.group;
+      var button = createSwitchButton(doc, groupName); //since I have the domainGroup I don't really need to pass the group name, that's stored in the group property
+
+      handleSwitchButtonClick(browser, domainGroup.domains, groupName, key, button, createStandinUrl
+      /* , getDataFromStorage */
+      );
+      wrapper.appendChild(button);
     });
   }
 }
@@ -107,6 +126,8 @@ function createStandinUrl(browser, standin, domains) {
                 console.log("without protocol and www:   " + withoutProtocolAndWWW + "\n" + "slashPos:    " + slashPos + "\n" + "domain name:   " + domainName);
 
                 if (domainName && domainName.length) {
+                  console.log("DOMAINS:   " + JSON.stringify(domains)); // DELETE
+
                   var validDomains = domains.filter(function (domain) {
                     return domain.includes(domainName);
                   });
@@ -230,8 +251,7 @@ function populateDropdownContainer(popupDomains, groupNames, doc, dropdownContai
     var dropdownAndLabel = createDropdownAndLabelCallback(dropdownId, groupName, domains, doc, createOptionCallback, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser);
     dropdownContainer.appendChild(dropdownAndLabel);
   });
-} //and switch button, apparently...
-
+}
 
 function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser) {
   //no label, labels aren't trendy
@@ -243,9 +263,7 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     var domainName = domain.replace("https://", "").replace("www.", "");
     var option = createOption(domainName, doc);
     dropdown.appendChild(option);
-  }); //new
-
-  var standinButton = createSwitchButton(doc, name);
+  });
   var dropdownAndLabel = doc.createElement("div");
   dropdownAndLabel.setAttribute("class", "dropdown-and-label"); //this is just a wrapper for the dropdown so I can remove it's default stylings
 
@@ -254,31 +272,32 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
   var container = doc.createElement("div");
   container.setAttribute("class", "dropdown-and-label-container");
   container.appendChild(dropdownAndLabel);
-  container.appendChild(standinButton); //no bueno
-
-  handleSwitchButtonClick(chrome, domains, name, "selectedStandins", standinButton, createStandinUrl, getDataFromStorage);
   setSelectedOptionsCallback("selectedStandins", name, dropdown, browser); //return dropdownAndLabel;
 
   return container;
 }
 
-var handleSwitchButtonClick = function handleSwitchButtonClick(browser, domains, groupName, key, button, createStandinUrl, getDataFromStorage) {
-  getDataFromStorage(browser, key).then(function (data) {
-    var selectedStandins = data[key];
-    var standinObject = selectedStandins.filter(function (standinObject) {
-      return standinObject.handle === groupName;
-    })[0];
-    var standin = standinObject.standin;
-    button.addEventListener("click", function (event) {
-      createStandinUrl(browser, standin, domains).then(function (newUrl) {
-        if (newUrl) {
-          browser.tabs.create({
-            url: newUrl
-          });
-        }
-      });
+var handleSwitchButtonClick = function handleSwitchButtonClick(browser, domains, groupName, selectedStandins, button, createStandinUrl) {
+  // getDataFromStorage(browser, key)
+  //     .then(
+  //         data => {
+  //             const selectedStandins = data[key];
+  var standinObject = selectedStandins.filter(function (standinObject) {
+    return standinObject.handle === groupName;
+  })[0];
+  var standin = standinObject.standin;
+  button.addEventListener("click", function (event) {
+    createStandinUrl(browser, standin, domains).then(function (newUrl) {
+      console.log("NEW URL:  " + newUrl); //delete
+
+      if (newUrl) {
+        browser.tabs.create({
+          url: newUrl
+        });
+      }
     });
-  });
+  }); //     }
+  // )
 };
 
 function createOption(value, doc) {
