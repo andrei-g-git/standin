@@ -24,15 +24,15 @@ function init(){
                 setSelectedOptions
             );
 
-            let buttonContainer = document.getElementById("standin-button-container");
-            populateSwitchButtonContainer(
-                buttonContainer, 
-                "selectedStandins", 
-                popupDomains, 
-                chrome, 
-                document, 
-                createSwitchButton
-            );       
+            // let buttonContainer = document.getElementById("standin-button-container");
+            // populateSwitchButtonContainer(
+            //     buttonContainer, 
+            //     "selectedStandins", 
+            //     popupDomains, 
+            //     chrome, 
+            //     document, 
+            //     createSwitchButton
+            // );       
 
         }); 
 
@@ -82,6 +82,7 @@ function populateSwitchButtonContainer(buttonContainer, selectedStandinsKey, pop
 }
 
 function createSwitchButton(doc, groupName){
+    console.log("GROUP HANDLE:   " + groupName)
     let buttonWrapper = doc.createElement("div");
     buttonWrapper.setAttribute("class", "switch-site-button");
     buttonWrapper.setAttribute("id", groupName + "-standin-button");
@@ -218,13 +219,47 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
         dropdown.appendChild(option);
     });
 
+    //new
+    let standinButton = createSwitchButton(doc, name);
+
     let dropdownAndLabel = doc.createElement("div");
     dropdownAndLabel.setAttribute("class", "dropdown-and-label"); //this is just a wrapper for the dropdown so I can remove it's default stylings
     dropdownAndLabel.appendChild(dropdown);
 
+    //new
+    let container = doc.createElement("div");
+    container.setAttribute("class", "dropdown-and-label-container");
+    container.appendChild(dropdownAndLabel);
+    container.appendChild(standinButton);
+
+    //no bueno
+    getDataFromStorage(chrome, "selectedStandins")
+        .then(
+            data => {
+                const selectedStandins = data["selectedStandins"];
+                const standinObject = selectedStandins.filter(standinObject => standinObject.handle === name)[0];
+                const standin = standinObject.standin;
+
+                standinButton.addEventListener("click", function(event){
+                    createStandinUrl(browser, standin, domains)
+                        .then(newUrl => {
+                            if(newUrl){
+                                browser
+                                .tabs
+                                .create({
+                                    url: newUrl
+                                }) 
+                            }
+                        })
+                });                
+            }
+        )
+
+
     setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
 
-    return dropdownAndLabel;
+    //return dropdownAndLabel;
+    return container;
 }
 
 function createOption(value, doc){

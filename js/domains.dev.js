@@ -24,13 +24,25 @@ var allSelected = {
     handle: "tiktok"
   }, {
     standin: "i.bcow.xyz",
-    handle: "imgur"
+    handle: "imgur",
+    title: "test url"
   } // {
   //     standin: "reuters.com",
   //     handle: "reuters"
   // },                              
   ]
-};
+}; //test --- it works
+// browser.runtime.onInstalled.addListener(({reason}) => {
+//     console.log("installed");
+//     if(reason === "install"){
+//         console.log("installed and reason == installed");
+//         browser.tabs.create({
+//             active: true,
+//             url: browser.extension.getURL("options.html")
+//         });
+//     }
+// });
+
 storeDataToStorage(chrome, {
   domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")
 });
