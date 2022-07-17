@@ -1,3 +1,5 @@
+//this does not need to be in the background property in the manifest
+
 
 document.addEventListener( 'DOMContentLoaded', init );
 
@@ -22,23 +24,31 @@ function init(){
                 createOption,
                 updateStorageOnChange,
                 setSelectedOptions 
+            );    
+
+            ///////////////////////// THERE'S SOMETHING WRONG HERE 3rd argument  --- passes data but it's treated like a key in the implementation
+            addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
+
+
+            //refresh
+            refreshPopupContainer( //I don't think I actually need to refresh the container after standin selection, the dropdown lists are the same...
+                justDomainGroupArrays,
+                justGroupNames, 
+                document,
+                dropdownContainer,
+                chrome,
+                createDropdownAndLabel,
+                createOption,
+                updateStorageOnChange,
+                setSelectedOptions                 
             );
 
-            // let buttonContainer = document.getElementById("standin-button-container");
-            // populateSwitchButtonContainer(
-            //     buttonContainer, 
-            //     "selectedStandins", 
-            //     popupDomains, 
-            //     chrome, 
-            //     document, 
-            //     createSwitchButton
-            // );       
-
-            addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
+            refreshStandinButtons(chrome, document, /* data["selectedStandins"] */"selectedStandins", popupDomains, dropdownContainer, createSwitchButton);
         }); 
 
     const optionsButton = document.getElementById("options-button");
     if(optionsButton){
+        console.log("delete in popup.js at line 44")
         optionsButton.addEventListener("click", function(){
             chrome.tabs.create({url: "options.html"}, () => console.log("options page should open"))
         });        
@@ -46,7 +56,54 @@ function init(){
 
 }
 
-function addStandinButtons(browser, doc, key, popupDomains, dropdownContainer, createSwitchButton){
+function refreshPopupContainer(
+    popupDomains,
+    groupNames,
+    doc,
+    dropdownContainer,
+    browser,
+    createDropdownAndLabelCallback,
+    createOptionCallback,
+    updateStorageOnChangeCallback,
+    setSelectedOptionsCallback
+){
+    browser.storage.local.onChanged.addListener(changes => {
+        console.log("refreshing POPUP CONTAINER,     changes: ", changes)
+        populateDropdownContainer(
+            popupDomains,
+            groupNames,
+            doc,
+            dropdownContainer,
+            browser,
+            createDropdownAndLabelCallback,
+            createOptionCallback,
+            updateStorageOnChangeCallback,
+            setSelectedOptionsCallback
+        );
+    });
+}
+
+function refreshStandinButtons(
+    browser, 
+    doc, 
+    selectedStandinsKEY, 
+    popupDomains, 
+    dropdownContainer, 
+    createSwitchButton
+    
+){
+    browser.storage.local.onChanged.addListener(changes => {
+        console.log("refreshing standing buttons,     changes: ", changes)
+        if(changes[selectedStandinsKEY]){
+            const selectedStandins = changes[selectedStandinsKEY].newValue;
+            console.log("NEW SELECTED STANDINS ", selectedStandins)
+            addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdownContainer, createSwitchButton);
+        }
+        
+    });          
+}
+
+function addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdownContainer, createSwitchButton){
     if(dropdownContainer){
         const dorpdownAndLabelWrappers = dropdownContainer.querySelectorAll(".dropdown-and-label-container");
         dorpdownAndLabelWrappers.forEach((wrapper, index) => {
@@ -55,7 +112,7 @@ function addStandinButtons(browser, doc, key, popupDomains, dropdownContainer, c
             const groupName = domainGroup.group;
             const button = createSwitchButton(doc, groupName);
                                                 //since I have the domainGroup I don't really need to pass the group name, that's stored in the group property
-            handleSwitchButtonClick(browser, domainGroup.domains, groupName, key, button, createStandinUrl/* , getDataFromStorage */);
+            handleSwitchButtonClick(browser, domainGroup.domains, groupName, selectedStandins, button, createStandinUrl/* , getDataFromStorage */);
 
             wrapper.appendChild(button);
         });        
@@ -201,22 +258,26 @@ function populateDropdownContainer(
     updateStorageOnChangeCallback,
     setSelectedOptionsCallback
 ){
-    groupNames.forEach((groupName, index) => {
-        const domains = popupDomains[index];
-        const dropdownId = groupName + "-dropdown";
-        let dropdownAndLabel = createDropdownAndLabelCallback(
-            dropdownId, 
-            groupName, 
-            domains, 
-            doc, 
-            createOptionCallback, 
-            updateStorageOnChangeCallback, 
-            setSelectedOptionsCallback, 
-            browser
-        );
+    if(dropdownContainer){
+        dropdownContainer.innerHTML = "";
+        groupNames.forEach((groupName, index) => {
+            const domains = popupDomains[index];
+            const dropdownId = groupName + "-dropdown";
+            let dropdownAndLabel = createDropdownAndLabelCallback(
+                dropdownId, 
+                groupName, 
+                domains, 
+                doc, 
+                createOptionCallback, 
+                updateStorageOnChangeCallback, 
+                setSelectedOptionsCallback, 
+                browser
+            );
 
-        dropdownContainer.appendChild(dropdownAndLabel);
-    }); 
+            dropdownContainer.appendChild(dropdownAndLabel);
+        });         
+    }
+
 }
 
 function createDropdownAndLabel(id, name, domains, doc, createOption, updateStorageOnChangeCallback, setSelectedOptionsCallback, browser){
