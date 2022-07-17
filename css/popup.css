@@ -6,13 +6,16 @@
 }
 
 .main-container{
-    /* width: 300px; */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end; /* this doesn't seem like the best solutin if I also want this on mobile... */
 }
 
 .options-button{
     position: relative;
     width: 16px;
-    height: 16px;    
+    height: 16px;   
+    float:inline-end; 
 }
 .options-gear{
     width: 100%;
