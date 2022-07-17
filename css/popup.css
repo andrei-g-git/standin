@@ -79,7 +79,7 @@
     appearance: none;
 
     border: none;
-    background-color: unset;
+    background-color: white;/* unset; */
     outline: none;
 
     color: var(--primary-warmer);
