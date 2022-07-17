@@ -333,7 +333,15 @@ const handleSwitchButtonClick = (browser, domains, groupName, selectedStandins, 
                                     url: newUrl
                                 }) 
                             }
-                        })
+                        });
+
+                    //because the newly created tab would get focus so the url changes. then substitution functions might try to work with the old url
+                    setTimeout(() => { //¯\_(ツ)_/¯
+                        window.close();
+                    },
+                        10
+                    )
+                    
                 });                
         //     }
         // )
