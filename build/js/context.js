@@ -5,7 +5,7 @@ const contextMenuItem = {
     "title": "Standin",
     "contexts": ["all"]
 };
-let browser = chrome; //doesn't support promisses   ---- or does it...
+let browser = chrome; //doesn't support promisses?
 
 browser
     .contextMenus
@@ -24,7 +24,7 @@ function handleContextClick(event, browser, getDomainNames, domainsKey){
 
             const path = extractUrlPath(event.linkUrl, validDomain);
 
-            loadStandinDomainName(validDomain, "selectedStandins", /* "popupDomainsReplacer" */"popupDomains", browser)
+            loadStandinDomainName(validDomain, "selectedStandins", "popupDomains", browser)
                 .then((domain) => {
                     openStandinlink(domain, path, browser, event);
                 });
@@ -108,7 +108,6 @@ async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, brow
         browser.storage.local.get([selectedKey, domainsKey], function(data){
 
             //new
-            //const selectedStandins = data[key];
             const popupDomains = data[domainsKey];
             const selectedStandins = data[selectedKey];
             let handle;

@@ -1,4 +1,3 @@
-//this does not need to be in the background property in the manifest
 
 
 document.addEventListener( 'DOMContentLoaded', init );
@@ -26,7 +25,6 @@ function init(){
                 setSelectedOptions 
             );    
 
-            ///////////////////////// THERE'S SOMETHING WRONG HERE 3rd argument  --- passes data but it's treated like a key in the implementation
             addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
 
 
@@ -43,7 +41,7 @@ function init(){
                 setSelectedOptions                 
             );
 
-            refreshStandinButtons(chrome, document, /* data["selectedStandins"] */"selectedStandins", popupDomains, dropdownContainer, createSwitchButton);
+            refreshStandinButtons(chrome, document, "selectedStandins", popupDomains, dropdownContainer, createSwitchButton);
         }); 
 
     const optionsButton = document.getElementById("options-button");
@@ -310,48 +308,40 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
 
     setSelectedOptionsCallback("selectedStandins", name, dropdown, browser);
 
-    //return dropdownAndLabel;
     return container;
 }
 
 const handleSwitchButtonClick = (browser, domains, groupName, selectedStandins, button, createStandinUrl) => {
-    // getDataFromStorage(browser, key)
-    //     .then(
-    //         data => {
-    //             const selectedStandins = data[key];
-                const standinObject = selectedStandins.filter(standinObject => standinObject.handle === groupName)[0];
-                const standin = standinObject.standin;
+    const standinObject = selectedStandins.filter(standinObject => standinObject.handle === groupName)[0];
+    const standin = standinObject.standin;
 
-                button.addEventListener("click", function(event){
-                    createStandinUrl(browser, standin, domains)
-                        .then(newUrl => {
-                            console.log("NEW URL:  " + newUrl) //delete
-                            if(newUrl){
-                                browser
-                                .tabs
-                                .create({
-                                    url: newUrl
-                                }) 
-                            }
-                        });
+    button.addEventListener("click", function(event){
+        createStandinUrl(browser, standin, domains)
+            .then(newUrl => {
+                console.log("NEW URL:  " + newUrl) //delete
+                if(newUrl){
+                    browser
+                    .tabs
+                    .create({
+                        url: newUrl
+                    }) 
+                }
+            });
 
-                    //because the newly created tab would get focus so the url changes. then substitution functions might try to work with the old url
-                    setTimeout(() => { //¯\_(ツ)_/¯
-                        window.close();
-                    },
-                        10
-                    )
-                    
-                });                
-        //     }
-        // )
+        //because the newly created tab would get focus so the url changes. then substitution functions might try to work with the old url
+        setTimeout(() => { //¯\_(ツ)_/¯
+            window.close();
+        },
+            10
+        )
+        
+    });                
 }
 
 function createOption(value, doc){
     let option = doc.createElement("option");
     option.setAttribute("class", "dropdown-option");
     option.setAttribute("value", value);
-    //option.innerHTML = value;
     option.appendChild(doc.createTextNode(value)); //mozilla doesn't like assigning directly to innerhtml, security issues etc
 
     return option;

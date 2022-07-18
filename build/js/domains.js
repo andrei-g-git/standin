@@ -1,60 +1,51 @@
+chrome.runtime.onInstalled.addListener(({reason}) => {
+    console.log("installed, reason = ", reason);
+    
+    const allSelected = {
+        selectedStandins: [
+            {
+                standin: "piped.kavin.rocks",
+                handle: "youtube" //these are constant
+            },
+            {
+                standin: "nitter.net",
+                handle: "twitter"
+            },
+            {
+                standin: "teddid.net",
+                handle: "reddit"
+            },
+            {
+                standin: "scribe.rip",
+                handle: "medium"
+            },
+            {
+                standin: "proxitok.herokuapp.com",
+                handle: "tiktok"
+            },  
+            {
+                standin: "i.bcow.xyz",
+                handle: "imgur",
+                title: "test url"
+            }  
+            // {
+            //     standin: "reuters.com",
+            //     handle: "reuters"
+            // },                              
+        ]
+    };
 
-//these should only run on install.
+    storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); 
+
+    storeDataToStorage(chrome, getSupportedDomains());
+
+    storeDataToStorage(chrome, getDefaultPopupDomains());
+
+    storeDataToStorage(chrome, allSelected);
+
+});
 
 
-const allSelected = {
-    selectedStandins: [
-        {
-            standin: "piped.kavin.rocks",//"youtube.com", 
-            handle: "youtube" //these are constant
-        },
-        {
-            standin: "nitter.net",//"twitter.com",
-            handle: "twitter"
-        },
-        {
-            standin: "teddid.net",//"reddit.com",
-            handle: "reddit"
-        },
-        {
-            standin: "scribe.rip",//"medium.com",
-            handle: "medium"
-        },
-        {
-            standin: "proxitok.herokuapp.com",//"tiktok.com",
-            handle: "tiktok"
-        },  
-        {
-            standin: "i.bcow.xyz",
-            handle: "imgur",
-            title: "test url"
-        }  
-        // {
-        //     standin: "reuters.com",
-        //     handle: "reuters"
-        // },                              
-    ]
-};
-
-//test --- it works
-// browser.runtime.onInstalled.addListener(({reason}) => {
-//     console.log("installed");
-//     if(reason === "install"){
-//         console.log("installed and reason == installed");
-//         browser.tabs.create({
-//             active: true,
-//             url: browser.extension.getURL("options.html")
-//         });
-//     }
-// });
-
-storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); 
-
-storeDataToStorage(chrome, getSupportedDomains());
-
-storeDataToStorage(chrome, getDefaultPopupDomains());
-
-storeDataToStorage(chrome, allSelected);
 
 function storePossibleDomains(domainsObject, browser, key){
     getDataFromStorage2(chrome, key)   
@@ -64,15 +55,6 @@ function storePossibleDomains(domainsObject, browser, key){
             }
         });
 }
-
-// function storeDataOnInstall(initialData, browser, key){ 
-//     getDataFromStorage2(browser, key)   
-//     .then((data) => {
-//         if( ! data || ! data[key]){
-//             storeDataToStorage(browser, initialData);
-//         }
-//     });    
-// }
 
 function mergeAllDomains(...args){
     let allDomains = Array.prototype.concat(...args);
@@ -310,16 +292,7 @@ function getDefaultPopupDomains(){
                 //imgin
                 "https://imgin.voidnet.tech"
             ]
-        }
-        //testing, delete
-        //DELETE
-        // {
-        //     group: "reuters",
-        //     domains: [
-        //         "https://reuters.com",
-        //         "https://boxcat.site", 
-        //     ]
-        // }                         
+        }                        
     ];
 
     return {popupDomains: popupDomains};
