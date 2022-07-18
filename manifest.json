@@ -1,35 +1,33 @@
 {
     "manifest_version": 2, 
     "name": "Standin",
-    "version": "0.1.97",
+    "version": "0.2.1",
     "description": "Open pages from sites like Youtube or Twitter with alternative frontends like Piped or Nitter!",
     "icons": {
-        "128": "assets/logo128.png",
-        "48": "assets/logo48.png",
-        "16": "assets/logo16.png"
+        "128": "build/assets/logo128.png",
+        "48": "build/assets/logo48.png",
+        "16": "build/assets/logo16.png"
     },
     "web_accessible_resources": [
-        "assets/options-gear-teal-256.png",
-        "assets/youtubeStandin.png",
-        "assets/twitterStandin.png",
-        "assets/redditStandin.png",
-        "assets/mediumStandin.png",
-        "assets/tiktokStandin.png",
-        "assets/imgurStandin.png"
+        "build/assets/options-gear-teal-256.png",
+        "build/assets/youtubeStandin.png",
+        "build/assets/twitterStandin.png",
+        "build/assets/redditStandin.png",
+        "build/assets/mediumStandin.png",
+        "build/assets/tiktokStandin.png",
+        "build/assets/imgurStandin.png"
     ],
     "browser_action": {
-        "default_icon": "assets/logo16.png",
-        "default_popup": "popup.html"
+        "default_icon": "build/assets/logo16.png",
+        "default_popup": "build/popup.html"
     },
     "options_ui": {
-        "page": "options.html"
+        "page": "build/options.html"
     },
     "background": {
         "scripts": [
-            "js/context.js",
-            "js/popup.js",
-            "js/options.js",
-            "js/domains.js"
+            "build/js/context.js",
+            "build/js/domains.js"
         ],
         "persistent": false
     },

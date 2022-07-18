@@ -1,3 +1,5 @@
+//this should run once on install? in chromium I get the error that the context is being created multiple times (has same index)
+
 const contextMenuItem = {
     "id": "standin-context",
     "title": "Standin",

@@ -1,4 +1,6 @@
 
+//these should only run on install.
+
 
 const allSelected = {
     selectedStandins: [
