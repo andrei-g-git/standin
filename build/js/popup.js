@@ -3,6 +3,10 @@
 document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
+    // jQuery(document).ready(function(){
+    //     jQuery("img").attr("src", "assets/logo48.png");        
+    // })
+
 
     getDataFromStorage(chrome, "popupDomains", "selectedStandins")
         .then(data => {

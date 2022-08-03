@@ -93,6 +93,7 @@ function getSupportedDomains(){
                 "https://piped.mha.fi",
                 "https://piped.privacy.com.de",
                 //invidious
+                "invidious.flokinet.to",
                 "https://yewtu.be",
                 "https://vid.puffyan.us",
                 "https://invidious.snopyta.org",
@@ -117,8 +118,6 @@ function getSupportedDomains(){
                 "https://twitter.com",
                 //nitter
                 "https://nitter.net",
-
-
                 "https://nitter.42l.fr",
                 "https://nitter.pussthecat.org",
                 "https://nitter.kavin.rocks",
