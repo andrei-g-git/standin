@@ -27,14 +27,16 @@
     "background": {
         "scripts": [
             "js/context.js",
-            "js/domains.js"
+            "js/domains.js",
+            "js/delete.js"
         ],
         "persistent": false
     },
     "permissions": [
         "contextMenus",
         "activeTab",
-        "storage"
+        "storage",
+        "downloads"
     ],
     "content_security_policy": "script-src 'self' https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js; object-src 'self'"
 }
