@@ -52,32 +52,6 @@ function init(){
     if(optionsButton){
         console.log("delete in popup.js at line 44")
         optionsButton.addEventListener("click", function(){
-
-
-            //delete
-            //
-            //
-            //
-            console.log("before chrome.downloads")
-
-            chrome.runtime.sendMessage({
-                url: "https://blah.com",
-                filename: "somefile.zip",
-                saveAs: true
-            });
-
-            // chrome.downloads.download(
-            //     {
-            //         url: "https://blah.com",
-            //         filename: "somefile.zip",
-            //         saveAs: true
-            //     },
-            //     () => console.log("should open file explorer")
-            // );
-            //
-            //
-            //
-
             chrome.tabs.create({url: "options.html"}, () => console.log("options page should open"))
         });        
     }
