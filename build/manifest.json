@@ -26,10 +26,11 @@
     },
     "background": {
         "scripts": [
+            "js/utils.js",
             "js/context.js",
             "js/domains.js"
         ],
-        "persistent": false
+        "persistent": true
     },
     "permissions": [
         "contextMenus",

@@ -48,8 +48,8 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
 
 
 function storePossibleDomains(domainsObject, browser, key){
-    getDataFromStorage2(chrome, key)   
-        .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES
+    getDataFromStorage/* 2 */(chrome, key)   
+        .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES -- except when the background script is non-persistent so I suppose it's fine
             if( ! data || ! data[key]){
                 storeDataToStorage(browser, domainsObject);
             }
@@ -62,21 +62,21 @@ function mergeAllDomains(...args){
     return allDomains;
 }
 
-async function getDataFromStorage2(browser, ...keys){  //I think these get bunched up in one big script, it seems like they become duplicates 
-    return new Promise((resolve, reject) => {
-        browser.storage.local.get([...keys], function(data){
-            resolve(data);
-        });
-    });
-}
+// async function getDataFromStorage2(browser, ...keys){  //I think these get bunched up in one big script, it seems like they become duplicates 
+//     return new Promise((resolve, reject) => {
+//         browser.storage.local.get([...keys], function(data){
+//             resolve(data);
+//         });
+//     });
+// }
 
-async function storeDataToStorage(browser, data){
-    return new Promise((resolve, reject) => {
-        browser.storage.local.set(data, function(){
-            resolve("sent");
-        });
-    });
-}
+// async function storeDataToStorage(browser, data){
+//     return new Promise((resolve, reject) => {
+//         browser.storage.local.set(data, function(){
+//             resolve("sent");
+//         });
+//     });
+// }
 
 function getSupportedDomains(){
     const supportedDomains = [ 

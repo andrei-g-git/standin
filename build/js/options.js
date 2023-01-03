@@ -7,7 +7,7 @@ function init(){
     let checkboxContainer = document.getElementById("checkbox-container");
 
     if(checkboxContainer){ 
-        getDataFromStorage3(chrome, "supportedDomains", "popupDomains")
+        getDataFromStorage/* 3 */(chrome, "supportedDomains", "popupDomains")
             .then( data => {
                 const domainGroups = data["supportedDomains"];
                 const groupsWithDefaultDomains = data["popupDomains"];
@@ -113,7 +113,7 @@ function handleCheckbox(checkboxAndLabel){
 
         console.log(groupLabel.innerHTML);
 
-        getDataFromStorage3(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
+        getDataFromStorage/* 3 */(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
             .then(data => {
                 let popupDomains = data["popupDomains"];
                 let newPopupDomains = null;
@@ -146,21 +146,21 @@ function handleAllCheckboxGroups(doc, className, handleCheckboxCallback){
     }
 }
 
-async function getDataFromStorage3(browser, ...keys){
-    return new Promise((resolve, reject) => {
-        browser.storage.local.get([...keys], function(data){
-            resolve(data);
-        });
-    });
-}
+// async function getDataFromStorage3(browser, ...keys){
+//     return new Promise((resolve, reject) => {
+//         browser.storage.local.get([...keys], function(data){
+//             resolve(data);
+//         });
+//     });
+// }
 
-async function storeDataToStorage(browser, data){
-    return new Promise((resolve, reject) => {
-        browser.storage.local.set(data, function(){
-            resolve("sent");
-        });
-    });
-}
+// async function storeDataToStorage(browser, data){
+//     return new Promise((resolve, reject) => {
+//         browser.storage.local.set(data, function(){
+//             resolve("sent");
+//         });
+//     });
+// }
 
 function addPopupDomain(popupDomains, domain, domainGroupName){ //mucho repeato
     popupDomains.forEach(group => { 

@@ -203,13 +203,13 @@ async function createStandinUrl(browser, standin, domains){
     });
 }
 
-async function getDataFromStorage(browser, ...keys){
-    return new Promise((resolve, reject) => {
-        browser.storage.local.get([...keys], function(data){
-            resolve(data);
-        });
-    });
-}
+// async function getDataFromStorage(browser, ...keys){
+//     return new Promise((resolve, reject) => {
+//         browser.storage.local.get([...keys], function(data){
+//             resolve(data);
+//         });
+//     });
+// }
 
 async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
     return new Promise((resolve, reject) => {                              
