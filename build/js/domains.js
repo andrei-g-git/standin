@@ -62,22 +62,6 @@ function mergeAllDomains(...args){
     return allDomains;
 }
 
-// async function getDataFromStorage2(browser, ...keys){  //I think these get bunched up in one big script, it seems like they become duplicates 
-//     return new Promise((resolve, reject) => {
-//         browser.storage.local.get([...keys], function(data){
-//             resolve(data);
-//         });
-//     });
-// }
-
-// async function storeDataToStorage(browser, data){
-//     return new Promise((resolve, reject) => {
-//         browser.storage.local.set(data, function(){
-//             resolve("sent");
-//         });
-//     });
-// }
-
 function getSupportedDomains(){
     const supportedDomains = [ 
         {

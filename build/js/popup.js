@@ -3,11 +3,6 @@
 document.addEventListener( 'DOMContentLoaded', init );
 
 function init(){
-    // jQuery(document).ready(function(){
-    //     jQuery("img").attr("src", "assets/logo48.png");        
-    // })
-
-
     getDataFromStorage(chrome, "popupDomains", "selectedStandins")
         .then(data => {
 
@@ -114,7 +109,7 @@ function addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdow
             const groupName = domainGroup.group;
             const button = createSwitchButton(doc, groupName);
                                                 //since I have the domainGroup I don't really need to pass the group name, that's stored in the group property
-            handleSwitchButtonClick(browser, domainGroup.domains, groupName, selectedStandins, button, createStandinUrl/* , getDataFromStorage */);
+            handleSwitchButtonClick(browser, domainGroup.domains, groupName, selectedStandins, button, createStandinUrl);
 
             wrapper.appendChild(button);
         });        
@@ -202,14 +197,6 @@ async function createStandinUrl(browser, standin, domains){
         });
     });
 }
-
-// async function getDataFromStorage(browser, ...keys){
-//     return new Promise((resolve, reject) => {
-//         browser.storage.local.get([...keys], function(data){
-//             resolve(data);
-//         });
-//     });
-// }
 
 async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
     return new Promise((resolve, reject) => {                              

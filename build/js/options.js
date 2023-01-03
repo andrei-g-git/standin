@@ -7,7 +7,7 @@ function init(){
     let checkboxContainer = document.getElementById("checkbox-container");
 
     if(checkboxContainer){ 
-        getDataFromStorage/* 3 */(chrome, "supportedDomains", "popupDomains")
+        getDataFromStorage(chrome, "supportedDomains", "popupDomains")
             .then( data => {
                 const domainGroups = data["supportedDomains"];
                 const groupsWithDefaultDomains = data["popupDomains"];
@@ -44,7 +44,6 @@ function createCheckboxGroups(doc, parent, domainGroups, defaultDomainGroup, dom
         groupLabel.setAttribute("class", "checkbox-group-label");
         groupLabel.setAttribute("for", domainGroupNames[index]);
         groupLabel.setAttribute("value", domainGroupNames[index]);
-        //groupLabel.innerHTML = domainGroupNames[index] + groupLabelSuffix;
         groupLabel.appendChild(doc.createTextNode(domainGroupNames[index] + groupLabelSuffix)); //there are excurity issues with assigning directly to the innerhtml, apparently
 
         let groupWithLabel = doc.createElement("div");
@@ -76,7 +75,6 @@ function createCheckbox(doc, domain, index, groupIndex, defaultDomainGroupS){
     let label = doc.createElement("label");
     label.setAttribute("class", "domain-label");
     label.setAttribute("for", "checbox-" + groupIndex + "-" + index);
-    //label.innerHTML = domain;
     label.appendChild(doc.createTextNode(domain));
 
     let checkboxAndLabel = doc.createElement("div");
@@ -113,7 +111,7 @@ function handleCheckbox(checkboxAndLabel){
 
         console.log(groupLabel.innerHTML);
 
-        getDataFromStorage/* 3 */(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
+        getDataFromStorage(chrome, "popupDomains")    //setting the browser from here goes against functional programming...
             .then(data => {
                 let popupDomains = data["popupDomains"];
                 let newPopupDomains = null;
@@ -145,22 +143,6 @@ function handleAllCheckboxGroups(doc, className, handleCheckboxCallback){
         handleCheckboxCallback(checkboxGroups[i]);
     }
 }
-
-// async function getDataFromStorage3(browser, ...keys){
-//     return new Promise((resolve, reject) => {
-//         browser.storage.local.get([...keys], function(data){
-//             resolve(data);
-//         });
-//     });
-// }
-
-// async function storeDataToStorage(browser, data){
-//     return new Promise((resolve, reject) => {
-//         browser.storage.local.set(data, function(){
-//             resolve("sent");
-//         });
-//     });
-// }
 
 function addPopupDomain(popupDomains, domain, domainGroupName){ //mucho repeato
     popupDomains.forEach(group => { 
