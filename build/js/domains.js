@@ -20,7 +20,7 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
                 handle: "medium"
             },
             {
-                standin: "proxitok.herokuapp.com",
+                standin: "https://proxitok.pabloferreiro.es",
                 handle: "tiktok"
             },  
             {
@@ -181,7 +181,20 @@ function getSupportedDomains(){
             domains: [
                 "https://tiktok.com",
                 //ticktock ... god forgive me for I have enabled cancer
-                "https://proxitok.herokuapp.com", 
+                "https://proxitok.pabloferreiro.es/", 
+                "proxitok.pussthecat.org",
+                "tok.habedieeh.re",
+                "proxitok.esmailelbob.xyz" 	,
+                "proxitok.privacydev.net" 	,
+                "tok.artemislena.eu" 	,
+                "tok.adminforge.de" 	,
+                "tik.hostux.net" 	,
+                "tt.vern.cc" 	,
+                "proxitok.pufe.org" 	,
+                "cringe.whatever.social" 	,
+                "proxitok.lunar.icu" 	,
+                "tok.thekitty.zone" 	,
+                "proxitok.privacy.com.de" 	,
             ]
         },
         {
