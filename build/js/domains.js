@@ -1,6 +1,6 @@
 chrome.runtime.onInstalled.addListener(({reason}) => {
     console.log("installed, reason = ", reason);
-    
+
     const allSelected = {
         selectedStandins: [
             {
@@ -8,11 +8,11 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
                 handle: "youtube" //these are constant
             },
             {
-                standin: "nitter.net",
+                standin: "nitter.freedit.eu",
                 handle: "twitter"
             },
             {
-                standin: "teddid.net",
+                standin: "reddit.lol",
                 handle: "reddit"
             },
             {
@@ -20,22 +20,22 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
                 handle: "medium"
             },
             {
-                standin: "https://proxitok.pabloferreiro.es",
+                standin: "proxitok.pabloferreiro.es",
                 handle: "tiktok"
-            },  
+            },
             {
-                standin: "i.bcow.xyz",
+                standin: "imgur.artemislena.eu",
                 handle: "imgur",
-                title: "test url"
-            }  
+                title: "imgur"
+            }
             // {
             //     standin: "reuters.com",
             //     handle: "reuters"
-            // },                              
+            // },
         ]
     };
 
-    storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")}); 
+    storeDataToStorage(chrome, {domains: getBunchedUpDomains(getSupportedDomains, "supportedDomains")});
 
     storeDataToStorage(chrome, getSupportedDomains());
 
@@ -48,8 +48,8 @@ chrome.runtime.onInstalled.addListener(({reason}) => {
 
 
 function storePossibleDomains(domainsObject, browser, key){
-    getDataFromStorage/* 2 */(chrome, key)   
-        .then((data) => {                   //I DON"T ACTUALLY HAVE TO MAKE SURE I DON"T OVERRIDE, THIS RUNS ON INSTALL SO IT NEVER DOES -- except when the background script is non-persistent so I suppose it's fine
+    getDataFromStorage(chrome, key)
+        .then((data) => {                   //it may seem like it's redundant since this runs on install and the data wouldn't be overidden, but it is when the background script is non-persistent so I suppose it's fine
             if( ! data || ! data[key]){
                 storeDataToStorage(browser, domainsObject);
             }
@@ -63,37 +63,91 @@ function mergeAllDomains(...args){
 }
 
 function getSupportedDomains(){
-    const supportedDomains = [ 
+    const supportedDomains = [ //would a json file be better?
         {
             group: "youtube",
             domains: [
                 "https://youtube.com",
+                "https://youtu.be",
                 //piped
-                "https://piped.kavin.rocks",
-                "https://piped.silkky.cloud",
-                "https://piped.tokhmi.xyz",
-                "https://piped.moomoo.me",
-                "https://piped.syncpundit.com",
-                "https://piped.mha.fi",
-                "https://piped.privacy.com.de",
+                "https://pipedapi.kavin.rocks",
+                "https://pipedapi.tokhmi.xyz",
+                "https://pipedapi.moomoo.me",
+                "https://pipedapi.syncpundit.io",
+                "https://api-piped.mha.fi",
+                "https://piped-api.garudalinux.org",
+                "https://pipedapi.rivo.lol",
+                "https://pipedapi.leptons.xyz",
+                "https://piped-api.lunar.icu",
+                "https://ytapi.dc09.ru",
+                "https://pipedapi.colinslegacy.com",
+                "https://yapi.vyper.me",
+                "https://api.looleh.xyz",
+                "https://piped-api.cfe.re",
+                "https://pipedapi.r4fo.com",
+                "https://pipedapi-libre.kavin.rocks",
+                "https://pa.mint.lgbt",
+                "https://pa.il.ax",
+                "https://piped-api.privacy.com.de",
+                "https://api.piped.projectsegfau.lt",
+                "https://pipedapi.in.projectsegfau.lt",
+                "https://pipedapi.us.projectsegfau.lt",
+                "https://watchapi.whatever.social",
+                "https://api.piped.privacydev.net",
+                "https://pipedapi.palveluntarjoaja.eu",
+                "https://pipedapi.smnz.de",
+                "https://pipedapi.adminforge.de",
+                "https://pipedapi.qdi.fi",
+                "https://piped-api.hostux.net",
+                "https://pdapi.vern.cc",
+                "https://pipedapi.pfcd.me",
+                "https://pipedapi.frontendfriendly.xyz",
+                "https://api.piped.yt",
+                "https://pipedapi.astartes.nl",
+                "https://pipedapi.osphost.fi",
+                "https://pipedapi.simpleprivacy.fr",
+                "https://pipedapi.drgns.space",
+                "https://piapi.ggtyler.dev",
+                "https://api.watch.pluto.lat",
+                "https://piped-backend.seitan-ayoub.lol",
+                "https://pipedapi.owo.si",
+                "https://pipedapi.12a.app",
+                "https://api.piped.minionflo.net",
+                "https://pipedapi.nezumi.party",
+                "https://pipedapi.ngn.tf",
                 //invidious
-                "invidious.flokinet.to",
                 "https://yewtu.be",
                 "https://vid.puffyan.us",
-                "https://invidious.snopyta.org",
-                "https://invidious.kavin.rocks",
-                "https://inv.riverside.rocks",
-                "https://invidious.osi.kr",
-                "https://y.com.sb",
-                "https://tube.cthd.icu",
-                "https://invidious.flokinet.to",
                 "https://yt.artemislena.eu",
-                "https://invidious.se...ivacy.com",
-                "https://inv.bp.projectsegfau.lt",
+                "https://invidious.flokinet.to",
+                "https://invidious.projectsegfau.lt",
+                "https://invidious.slipfox.xyz",
+                "https://invidious.privacydev.net",
+                "https://iv.melmac.space",
+                "https://iv.ggtyler.dev",
                 "https://invidious.lunar.icu",
-                "https://invidious.xamh.de",
-                //youtu.be
-                "https://youtu.be"
+                "https://inv.nadeko.net",
+                "https://inv.tux.pizza",
+                "https://invidious.protokolla.fi",
+                "https://iv.nboeck.de",
+                "https://invidious.private.coffee",
+                "https://yt.drgnz.club",
+                "https://iv.datura.network",
+                "https://invidious.fdn.fr",
+                "https://invidious.perennialte.ch",
+                "https://yt.cdaut.de",
+                "https://invidious.drgns.space",
+                "https://inv.us.projectsegfau.lt",
+                "https://invidious.einfachzocken.eu",
+                "https://invidious.nerdvpn.de",
+                "https://inv.n8pjl.ca",
+                "https://youtube.owacon.moe",
+                "https://invidious.jing.rocks",
+                //cloudtube
+                "https://tube.cadence.moe",
+                //invuedious - invidious wrapper
+                "https://bocchilorenzo.github.io/invuedious/watch/IL2P1IB-2nc"
+
             ]
         },
         {
@@ -101,57 +155,68 @@ function getSupportedDomains(){
             domains: [
                 "https://twitter.com",
                 //nitter
-                "https://nitter.net",
-                "https://nitter.42l.fr",
-                "https://nitter.pussthecat.org",
-                "https://nitter.kavin.rocks",
+                "https://nitter.freedit.eu",
                 "https://nitter.unixfox.eu",
-                "https://nitter.namazso.eu",
-                "https://nitter.hu",
-                "https://nitter.moomoo.me",
-                "https://nitter.it",
-                "https://twitter.censors.us",
-                "https://nitter.grimneko.de",
-                "https://nitter.ca",
-                "https://twitter.076.ne.jp ",
-                "https://nitter.fly.dev ",
-                "https://notabird.site ",
-                "https://nitter.weiler.rocks",
-                "https://nitter.sethforprivacy.com",
-                "https://nttr.stream",
-                "https://nitter.cutelab.space",
-                "https://nitter.nl",
-                "https://nitter.mint.lgbt",
-                "https://nitter.bus-hit.me",
+                "https://nitter.lanterne-rouge.info",
                 "https://nitter.esmailelbob.xyz",
-                "https://tw.artemislena.eu",
-                "https://de.nttr.stream",
-                "https://nitter.winscloud.net",
-                "https://nitter.tiekoetter.com",
-                "https://nitter.spaceint.fr",
-                "https://twtr.bch.bar",
-                "https://nitter.privacy.com.de",
-                "https://nitter.mastodon.pro",
-                "https://nitter.notraxx.ch",
-                "https://nitter.poast.org",
-                "https://nitter.bird.froth.zone",
-                "https://nitter.dcs0.hu",
-                "https://twitter.dr460nf1r3.org",
-                "https://twitter.beparanoid.de",
-                "https://n.ramle.be",
-                "https://nitter.cz",
+                "https://nitter.woodland.cafe",
+                "https://nitter.x86-64-unknown-linux-gnu.zip",
                 "https://nitter.privacydev.net",
-                "https://tweet.lambda.dance",
-                "https://nitter.ebnar.xyz",
+                "https://nitter.perennialte.ch",
+                "https://nitter.moomoo.me",
                 "https://nitter.kylrth.com",
-                "https://nitter.oishi-ra.men",
-                "https://nitter.foss.wtf",
-                "https://nitter.priv.pw",
+                "https://nitter.mint.lgbt",
+                "https://nitter.adminforge.de",
+                "https://nitter.eu.projectsegfau.lt",
+                "https://nitter.cz",
+                "https://n.opnxng.com",
+                "https://nitter.projectsegfau.lt",
+                "https://nitter.in.projectsegfau.lt",
+                "https://nitter.us.projectsegfau.lt",
+                "https://nitter.oksocial.net",
+                "https://nitter.soopy.moe",
+                "https://nitter.fdn.fr",
+                "https://nitter.private.coffee",
+                "https://nitter.nohost.network",
+                "https://nitter.holo-mix.com",
+                "https://nitter.tux.pizza",
+                "https://nitter.no-logs.com",
+                "https://nitter.rawbit.ninja",
+                "https://nitter.jakefrosty.com",
+                "https://n.populas.no",
+                "https://nitter.1d4.us",
+                "https://nitter.ktachibana.party",
+                "https://nitter.catsarch.com",
+                "https://nitter.io.lol",
+                "https://nitter.poast.org",
+                "https://nitter.salastil.com",
+                "https://nitter.net",
+                "https://nitter.d420.de",
+                "https://nitter.manasiwibi.com",
+                "https://n.biendeo.com",
+                "https://nitter.tinfoil-hat.net",
+                "https://nitter.dafriser.be",
+                "https://nt.ggtyler.dev",
+                "https://nitter.hostux.net",
+                "https://nitter.kling.gg",
+                "https://nitter.qwik.space",
+                "https://nitter.kavin.rocks",
+                "https://nitter.altgr.xyz",
+                "https://nitter.simpleprivacy.fr",
+                "https://nitter.tiekoetter.com",
+                "https://bird.habedieeh.re",
+                "https://nitter.it",
+                "https://tweet.lambda.dance",
+                "https://n.sneed.network",
+                "https://nitter.nixnet.services",
+                "https://nitter.at",
+                "https://nitter.inpt.fr",
                 "https://t.com.sb",
-                "https://nt.vern.cc",
-                "https://nitter.wef.lol",
-                "https://nitter.tokhmi.xyz",
-                "https://nitter.catalyst.sx",
+                "https://nitter.lunar.icu",
+                "https://nitter.bird.froth.zone",
+                "https://nitter.twei.space",
+                "https://nitter.fediflix.org",
+                "https://nitter.datura.network",
 
             ]
         },
@@ -159,9 +224,60 @@ function getSupportedDomains(){
             group: "reddit",
             domains: [
                 "https://reddit.com",
-                //reddit
+                //teddit
                 "https://teddit.net",
-                "https://libredd.it"
+                "https://teddit.ggc-project.de",
+                "https://teddit.zaggy.nl",
+                "https://teddit.tinfoil-hat.net",
+                "https://teddit.domain.glass",
+                "https://snoo.ioens.is",
+                "https://teddit.httpjames.space",
+                "https://teddit.xbdm.fun",
+                "https://incogsnoo.com",
+                "https://teddit.pussthecat.org",
+                "https://reddit.lol",
+                "https://teddit.sethforprivacy.com",
+                "https://teddit.adminforge.de",
+                "https://teddit.bus-hit.me",
+                "https://teddit.froth.zone",
+                "https://rdt.trom.tf/",
+                "https://teddit.encrypted-data.xyz",
+                "https://i.opnxng.com",
+                "https://teddit.tokhmi.xyz",
+                "https://teddit.garudalinux.org",
+                "https://teddit.privacytools.io",
+                "https://td.vern.cc",
+                "https://teddit.rawbit.ninja",
+                "https://teddit.hostux.net",
+                "https://teddit.no-logs.com/",
+                "https://teddit.projectsegfau.lt",
+                "https://teddit.laserdisc.tokyo",
+                "https://t.sneed.network",
+                //libreddit
+                "https://safereddit.com",
+                "https://reddit.invak.id",
+                "https://reddit.simo.sh",
+                "https://libreddit.strongthany.cc",
+                "https://libreddit.pussthecat.org",
+                "https://libreddit.northboot.xyz",
+                "https://lr.vern.cc",
+                "https://libreddit.privacydev.net",
+                "https://l.opnxng.com",
+                "https://libreddit.projectsegfau.lt",
+                "https://libreddit.oxymagnesium.com",
+                "https://lr.artemislena.eu",
+                "https://discuss.whatever.social",
+                "https://lr.aeong.one",
+                "https://libreddit.bus-hit.me",
+                "https://libreddit.lunar.icu",
+                "https://snoo.habedieeh.re",
+                "https://libreddit.tux.pizza",
+                //xeddit
+                "https://xeddit.com",
+                //reddit-frontend
+                "https://jpf-reddit.netlify.app",
+                //troddit
+                "https://www.troddit.com"
             ]
         },
         {
@@ -174,27 +290,39 @@ function getSupportedDomains(){
                 "https://scribe.bus-hit.me",
                 "https://scribe.citizen4.eu",
                 "https://scribe.nixnet.services",
+                //libmedium
+                "https://md.vern.cc",
+                "https://libmedium.batsense.net",
+                "https://medium.hostux.net",
+                "https://md.xbdm.fun",
             ]
         },
         {
-            group: "tiktok",
+            group: "tiktok", //sorry...
             domains: [
                 "https://tiktok.com",
-                //ticktock ... god forgive me for I have enabled cancer
-                "https://proxitok.pabloferreiro.es/", 
-                "proxitok.pussthecat.org",
-                "tok.habedieeh.re",
-                "proxitok.esmailelbob.xyz" 	,
-                "proxitok.privacydev.net" 	,
-                "tok.artemislena.eu" 	,
-                "tok.adminforge.de" 	,
-                "tik.hostux.net" 	,
-                "tt.vern.cc" 	,
-                "proxitok.pufe.org" 	,
-                "cringe.whatever.social" 	,
-                "proxitok.lunar.icu" 	,
-                "tok.thekitty.zone" 	,
-                "proxitok.privacy.com.de" 	,
+                //proxitok
+                "https://proxitok.pabloferreiro.es",
+                "https://proxitok.pussthecat.org",
+                "https://tok.habedieeh.re",
+                "https://proxitok.esmailelbob.xyz",
+                "https://proxitok.privacydev.net",
+                "https://tok.artemislena.eu",
+                "https://tok.adminforge.de",
+                "https://tik.hostux.net",
+                "https://tt.vern.cc",
+                "https://cringe.whatever.social",
+                "https://proxitok.lunar.icu",
+                "https://proxitok.privacy.com.de",
+                "https://cringe.whateveritworks.org",
+                "https://cringe.seitan-ayoub.lol",
+                "https://proxitok.kyun.li",
+                "https://cringe.datura.network",
+                "https://tt.opnxng.com",
+                "https://proxitok.tinfoil-hat.net",
+                "https://tiktok.wpme.pl",
+                "https://proxitok.r4fo.com",
+                "https://proxitok.belloworld.it",
             ]
         },
         {
@@ -202,48 +330,63 @@ function getSupportedDomains(){
             domains: [
                 //rimgo
                 "https://imgur.com",
+                //?
                 "https://i.bcow.xyz",
-                "https://rimgo.pussthecat.org",
+                //rimgo etc
                 "https://rimgo.totaldarkness.net",
-                "https://rimgo.bus-hit.me",
-                "https://rimgo.esmailelbob.xyz",
-                "https://rimgo.lunar.icu",
-                "https://i.actionsack.com",
-                "https://rimgo.privacydev.net",
                 "https://imgur.artemislena.eu",
-                "https://rimgo.encrypted-data.xyz",
+                "https://i.habedieeh.re",
+                "https://ri.nadeko.net",
+                "https://rimgo.lunar.icu",
+                "https://imgur.010032.xyz",
+                "https://rimgo.kling.gg",
+                "https://rimgo.projectsegfau.lt",
+                "https://rimgo.eu.projectsegfau.lt",
+                "https://rimgo.us.projectsegfau.lt",
+                "https://rimgo.in.projectsegfau.lt",
+                "https://rimgo.whateveritworks.org",
+                "https://rimgo.nohost.network",
+                "https://rimgo.catsarch.com",
+                "https://rimgo.drgns.space",
+                "https://rimgo.quantenzitrone.eu",
+                "https://rimgo.frylo.net",
+                "https://rimgo.ducks.party",
+                "https://rimgo.perennialte.ch",
                 //imgin
                 "https://imgin.voidnet.tech"
             ]
         }
-        //DELETE
         // {
         //     group: "reuters",
         //     domains: [
         //         "https://reuters.com",
-        //         "https://boxcat.site", 
+        //         "https://boxcat.site",
         //     ]
-        // }    
-        
-        
+        // }
+
+
     ];
 
     return {supportedDomains: supportedDomains};
 }
 
 function getDefaultPopupDomains(){
-    const popupDomains = [ 
+    const popupDomains = [
         {
             group: "youtube",
             domains: [
                 "https://youtube.com",
+                "https://youtu.be",
                 //piped
                 "https://piped.kavin.rocks",
+                "https://pipedapi.moomoo.me",
+                "https://pipedapi.tokhmi.xyz",
                 //invidious
                 "https://yewtu.be",
-                "https://invidio.xamh.de",
-                //youtu.be
-                "https://youtu.be"
+                "https://invidious.fdn.fr",
+                "https://vid.puffyan.us",
+                //cloudtube
+                "https://tube.cadence.moe",
             ]
         },
         {
@@ -251,16 +394,21 @@ function getDefaultPopupDomains(){
             domains: [
                 "https://twitter.com",
                 //nitter
-                "https://nitter.net",
+                "nitter.freedit.eu",
+                "nitter.unixfox.eu",
+                "nitter.woodland.cafe",
             ]
         },
         {
             group: "reddit",
             domains: [
                 "https://reddit.com",
-                //reddit
-                "https://teddit.net",
-                "https://libredd.it"
+                //teddit
+                "https://reddit.lol",
+                "https://teddit.zaggy.nl",
+                //libreddit
+                "https://safereddit.com",
+                "https://libreddit.pussthecat.org",
             ]
         },
         {
@@ -269,14 +417,17 @@ function getDefaultPopupDomains(){
                 "https://medium.com",
                 //medium
                 "https://scribe.rip",
+                //libmedium
+                "https://md.vern.cc"
             ]
         },
         {
-            group: "tiktok",
+            group: "tiktok", // :(
             domains: [
                 "https://tiktok.com",
-                //ticktock ... god forgive me for I have enabled cancer
-                "https://proxitok.herokuapp.com", 
+                //proxitok
+                "https://proxitok.pabloferreiro.es",
+                "https://tt.vern.cc/",
             ]
         },
         {
@@ -284,11 +435,11 @@ function getDefaultPopupDomains(){
             domains: [
                 "https://imgur.com",
                 //rimgo
-                "https://i.bcow.xyz",
+                "https://imgur.artemislena.eu/",
                 //imgin
                 "https://imgin.voidnet.tech"
             ]
-        }                        
+        }
     ];
 
     return {popupDomains: popupDomains};
@@ -302,7 +453,7 @@ function getBunchedUpDomains(getDomains, key){
     arrayGroups.forEach(group => {
         bunchedUpDomains.push.apply(bunchedUpDomains, group);
     });
-    console.log("bunched up domains:   " + bunchedUpDomains);
+    //console.log("bunched up domains:   " + bunchedUpDomains);
     return bunchedUpDomains;
 }
 

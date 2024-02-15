@@ -16,7 +16,7 @@ browser
     .onClicked
     .addListener((event) => handleContextClick(event, browser, getDomainNames, "domains"));
 
-function handleContextClick(event, browser, getDomainNames, domainsKey){ 
+function handleContextClick(event, browser, getDomainNames, domainsKey){
 
     getDomainNames(browser, domainsKey) //this is redundant but changing it to just grab popupDomains(replacer) and map a pure domains list is too much of a hassle
         .then(domainList => {
@@ -31,7 +31,7 @@ function handleContextClick(event, browser, getDomainNames, domainsKey){
         });
 
 
-}    
+}
 
 
 async function getDomainNames(browser, domainsKey){
@@ -45,7 +45,7 @@ async function getDomainNames(browser, domainsKey){
             });
     });
 
-} 
+}
 
 
 function onError(error){
@@ -54,8 +54,10 @@ function onError(error){
 
 function validateClickedLink(url, domainList){
     let validDomain;
+    console.log("------full url-----:", url)
     if(url && url.length){
         for(let i = 0; i < domainList.length; i++){
+            console.log("domain currently looped:  ", domainList[i])
             if(url.includes(domainList[i])){
                 validDomain = domainList[i];
                 break
@@ -85,7 +87,7 @@ function extractUrlPath(url, validDomain){
 function openStandinlink(domain, path, browser, event){
     if(domain && path){
         const standin = domain + path;
-        
+
 
         if(event.menuItemId === "standin-context"){
             console.log("STANDIN IS: " + standin);
@@ -107,7 +109,6 @@ async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, brow
     return new Promise((resolve, reject) => {
         browser.storage.local.get([selectedKey, domainsKey], function(data){
 
-            //new
             const popupDomains = data[domainsKey];
             const selectedStandins = data[selectedKey];
             let handle;
@@ -121,7 +122,6 @@ async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, brow
                     }
                 }
             }
-            //
             const storedHostName = selectedStandins
                 .filter(object => object.handle === handle)[0]
                 .standin;
@@ -136,8 +136,6 @@ async function loadStandinDomainName(sourceDomain, selectedKey, domainsKey, brow
                 console.log("couldn't retrieve your chosen standin domain name")
                 reject();
             }
-
         });
-
     });
 }

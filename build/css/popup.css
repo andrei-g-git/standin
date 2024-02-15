@@ -8,7 +8,7 @@
 .main-container{
     display: flex;
     flex-direction: column;
-    align-items: flex-end; /* this doesn't seem like the best solutin if I also want this on mobile... */
+    align-items: flex-end; /* this doesn't seem like the best solutin if I also want it on mobile... */
 }
 
 .options-button{
