@@ -445,6 +445,37 @@ function getDefaultPopupDomains(){
     return {popupDomains: popupDomains};
 }
 
+function getSpecialDomains(){
+    const speciaDomains = [
+        {
+            domain: "youtu.be",
+            parameter: "",
+            replace: "watch?v="
+        }
+
+    ]
+
+    return {specialDomains: speciaDomains}
+}
+
+function prepSpecialDomainUrl(url, specialDomains){
+    let newUrl = url;
+    for(i = 0; i < specialDomains.length; i++){
+        const d = specialDomains[i]
+        if(url.contains(d.domain)){
+            if(d.parameter.length){
+                newUrl = url.replace(d.parameter, d.replace)
+            }else{
+                const replaceIndex = url.indexOf(d.domain) - 1 + d.domain.length + 1 // +1 for the post-domain "/"
+                newUrl = url.slice(0, replaceIndex) + d.replace + url.slice(replaceIndex)
+            }
+            console.log("NEW SPECIAL URL")
+        }
+    }
+    return newUrl
+}
+
+
 function getBunchedUpDomains(getDomains, key){
     const domainData = getDomains();
     const domains = domainData[key];

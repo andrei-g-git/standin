@@ -14,15 +14,15 @@ function init(){
 
             populateDropdownContainer(
                 justDomainGroupArrays,
-                justGroupNames, 
+                justGroupNames,
                 document,
                 dropdownContainer,
                 chrome,
                 createDropdownAndLabel,
                 createOption,
                 updateStorageOnChange,
-                setSelectedOptions 
-            );    
+                setSelectedOptions
+            );
 
             addStandinButtons(chrome, document, data["selectedStandins"], popupDomains, dropdownContainer, createSwitchButton);
 
@@ -30,25 +30,25 @@ function init(){
             //refresh
             refreshPopupContainer( //I don't think I actually need to refresh the container after standin selection, the dropdown lists are the same...
                 justDomainGroupArrays,
-                justGroupNames, 
+                justGroupNames,
                 document,
                 dropdownContainer,
                 chrome,
                 createDropdownAndLabel,
                 createOption,
                 updateStorageOnChange,
-                setSelectedOptions                 
+                setSelectedOptions
             );
 
             refreshStandinButtons(chrome, document, "selectedStandins", popupDomains, dropdownContainer, createSwitchButton);
-        }); 
+        });
 
     const optionsButton = document.getElementById("options-button");
     if(optionsButton){
         console.log("delete in popup.js at line 44")
         optionsButton.addEventListener("click", function(){
             chrome.tabs.create({url: "options.html"}, () => console.log("options page should open"))
-        });        
+        });
     }
 
 }
@@ -81,13 +81,13 @@ function refreshPopupContainer(
 }
 
 function refreshStandinButtons(
-    browser, 
-    doc, 
-    selectedStandinsKEY, 
-    popupDomains, 
-    dropdownContainer, 
+    browser,
+    doc,
+    selectedStandinsKEY,
+    popupDomains,
+    dropdownContainer,
     createSwitchButton
-    
+
 ){
     browser.storage.local.onChanged.addListener(changes => {
         console.log("refreshing standing buttons,     changes: ", changes)
@@ -96,8 +96,8 @@ function refreshStandinButtons(
             console.log("NEW SELECTED STANDINS ", selectedStandins)
             addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdownContainer, createSwitchButton);
         }
-        
-    });          
+
+    });
 }
 
 function addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdownContainer, createSwitchButton){
@@ -112,7 +112,7 @@ function addStandinButtons(browser, doc, selectedStandins, popupDomains, dropdow
             handleSwitchButtonClick(browser, domainGroup.domains, groupName, selectedStandins, button, createStandinUrl);
 
             wrapper.appendChild(button);
-        });        
+        });
     }
 
 }
@@ -141,13 +141,13 @@ function populateSwitchButtonContainer(buttonContainer, selectedStandinsKey, pop
                                 .tabs
                                 .create({
                                     url: newUrl
-                                }) 
+                                })
                             }
                         })
 
                 });
             }
-        });        
+        });
     } else {
         console.log("the standin button container has not yet loaded into the document")
     }
@@ -172,7 +172,11 @@ function createSwitchButton(doc, groupName){
 async function createStandinUrl(browser, standin, domains){
     return new Promise(resolve => {
         browser.tabs.query({active: true, currentWindow: true}, (allTabs) => {
-            const url = allTabs[0].url;
+            let url = allTabs[0].url;
+
+            //new
+            url = prepSpecialDomainUrl(url, getSpecialDomains());
+
             const protocol = url.slice(0, 8);
             if(protocol === "https://"){
                 const withoutProtocolAndWWW = url
@@ -189,26 +193,26 @@ async function createStandinUrl(browser, standin, domains){
                         const path = withoutProtocolAndWWW.slice(slashPos);
                         const fullStandinUrl = "https://" + standin + path;
                         console.log("full standin url:    " + fullStandinUrl);
-                        resolve(fullStandinUrl);                 
+                        resolve(fullStandinUrl);
                     }
 
-                } 
-            } 
+                }
+            }
         });
     });
 }
 
-async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail 
-    return new Promise((resolve, reject) => {                              
+async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh install this promise might fail
+    return new Promise((resolve, reject) => {
         chrome.storage.local.get([key], function(data){
             if(! data[key] || ! data[key].length){
                 chrome.storage.local.set({ [key]: defaultDomain});
                 dropdown.value = defaultDomain;
             } else {
                 dropdown.value = data[key];
-            }   
-            
-            if( ! data) reject(); 
+            }
+
+            if( ! data) reject();
         });
 
         resolve(dropdown.value);
@@ -216,11 +220,11 @@ async function setDefaultStandinDomain(dropdown, key, defaultDomain){ //on fresh
 
 }
 
-function updateStorageOnChange(dropdown, key, groupHandle){  //on fresh install this promise might fail 
+function updateStorageOnChange(dropdown, key, groupHandle){  //on fresh install this promise might fail
     dropdown.addEventListener("change", async function(event){
         return new Promise((resolve, reject) => { //so there's no point returning a promise here, I don't know how to capture the promise since the anonymous function returns it, not updateStorageOnChange -- I can't call .then() on the latter
             chrome.storage.local.get([key], function(data){
-                const selectedStandins = data[key]; 
+                const selectedStandins = data[key];
 
                 for(let i = 0; i < selectedStandins.length; i++){
                     console.log(selectedStandins[i].standin)
@@ -229,11 +233,11 @@ function updateStorageOnChange(dropdown, key, groupHandle){  //on fresh install 
                     }
                 }
                 chrome.storage.local.set({selectedStandins: selectedStandins}, function(data){
-                    resolve(data[key]);    
+                    resolve(data[key]);
                 })
             });
-        }); 
-    });  
+        });
+    });
 }
 
 function populateDropdownContainer(
@@ -253,18 +257,18 @@ function populateDropdownContainer(
             const domains = popupDomains[index];
             const dropdownId = groupName + "-dropdown";
             let dropdownAndLabel = createDropdownAndLabelCallback(
-                dropdownId, 
-                groupName, 
-                domains, 
-                doc, 
-                createOptionCallback, 
-                updateStorageOnChangeCallback, 
-                setSelectedOptionsCallback, 
+                dropdownId,
+                groupName,
+                domains,
+                doc,
+                createOptionCallback,
+                updateStorageOnChangeCallback,
+                setSelectedOptionsCallback,
                 browser
             );
 
             dropdownContainer.appendChild(dropdownAndLabel);
-        });         
+        });
     }
 
 }
@@ -276,7 +280,7 @@ function createDropdownAndLabel(id, name, domains, doc, createOption, updateStor
     dropdown.setAttribute("id", id);
     dropdown.setAttribute("class", "dropdown");
 
-    updateStorageOnChangeCallback(dropdown, "selectedStandins", name) 
+    updateStorageOnChangeCallback(dropdown, "selectedStandins", name)
 
     domains.forEach(domain => {
         let domainName = domain
@@ -315,7 +319,7 @@ const handleSwitchButtonClick = (browser, domains, groupName, selectedStandins, 
                     .tabs
                     .create({
                         url: newUrl
-                    }) 
+                    })
                 }
             });
 
@@ -325,8 +329,8 @@ const handleSwitchButtonClick = (browser, domains, groupName, selectedStandins, 
         },
             10
         )
-        
-    });                
+
+    });
 }
 
 function createOption(value, doc){
@@ -348,7 +352,7 @@ function setSelectedOptions(key, domainHandle, dropdown, browser){
                 for(let i = 0; i < optionsArray.length; i++){
                     const option = optionsArray[i];
                     if(option.innerHTML.includes(standin)){
-                        dropdown.selectedIndex = i;  
+                        dropdown.selectedIndex = i;
                     }
                 }
             }
